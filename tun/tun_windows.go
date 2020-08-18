@@ -2,7 +2,6 @@ package tun
 
 import (
 	"encoding/binary"
-	// "encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -18,30 +17,32 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
+// 常量定义
 const (
-	TAPWIN32_MAX_REG_SIZE    = 256
-	TUNTAP_COMPONENT_ID_0901 = "tap0901"
-	TUNTAP_COMPONENT_ID_0801 = "tap0801"
-	NETWORK_KEY              = `SYSTEM\\CurrentControlSet\\Control\\Network\\{4D36E972-E325-11CE-BFC1-08002BE10318}`
-	ADAPTER_KEY              = `SYSTEM\CurrentControlSet\Control\Class\{4D36E972-E325-11CE-BFC1-08002BE10318}`
+	TapWin32MaxRegSize    = 256
+	TuntapComponentID0901 = "tap0901"
+	TuntapComponentID0801 = "tap0801"
+	NetworkKey            = `SYSTEM\\CurrentControlSet\\Control\\Network\\{4D36E972-E325-11CE-BFC1-08002BE10318}`
+	AdapterKey            = `SYSTEM\CurrentControlSet\Control\Class\{4D36E972-E325-11CE-BFC1-08002BE10318}`
 )
 
-func ctl_code(device_type, function, method, access uint32) uint32 {
-	return (device_type << 16) | (access << 14) | (function << 2) | method
+func ctlCode(deviceType, function, method, access uint32) uint32 {
+	return (deviceType << 16) | (access << 14) | (function << 2) | method
 }
 
-func tap_control_code(request, method uint32) uint32 {
-	return ctl_code(34, request, method, 0)
+func tapControlCode(request, method uint32) uint32 {
+	return ctlCode(34, request, method, 0)
 }
 
+// 变量定义
 var (
-	k32                               = windows.NewLazySystemDLL("kernel32.dll")
-	procGetOverlappedResult           = k32.NewProc("GetOverlappedResult")
-	TAP_IOCTL_GET_MTU                 = tap_control_code(3, 0)
-	TAP_IOCTL_SET_MEDIA_STATUS        = tap_control_code(6, 0)
-	TAP_IOCTL_CONFIG_TUN              = tap_control_code(10, 0)
-	TAP_WIN_IOCTL_CONFIG_DHCP_MASQ    = tap_control_code(7, 0)
-	TAP_WIN_IOCTL_CONFIG_DHCP_SET_OPT = tap_control_code(9, 0)
+	k32                         = windows.NewLazySystemDLL("kernel32.dll")
+	procGetOverlappedResult     = k32.NewProc("GetOverlappedResult")
+	TapIoctlGetMtu              = tapControlCode(3, 0)
+	TapIoctlSetMediaStatus      = tapControlCode(6, 0)
+	TapIoctlConfigTun           = tapControlCode(10, 0)
+	TapWinIoctlConfigDHCPMasq   = tapControlCode(7, 0)
+	TapWinIoctlConfigDHCPSetOpt = tapControlCode(9, 0)
 )
 
 func decodeUTF16(b []byte) string {
@@ -51,20 +52,20 @@ func decodeUTF16(b []byte) string {
 
 	l := len(b) / 2
 	u16 := make([]uint16, l)
-	for i := 0; i < l; i += 1 {
+	for i := 0; i < l; i++ {
 		u16[i] = uint16(b[2*i]) + (uint16(b[2*i+1]) << 8)
 	}
 	return windows.UTF16ToString(u16)
 }
 
-func getTuntapName(componentId string) (string, error) {
-	keyName := fmt.Sprintf(NETWORK_KEY+"\\%s\\Connection", componentId)
+func getTuntapName(componentID string) (string, error) {
+	keyName := fmt.Sprintf(NetworkKey+"\\%s\\Connection", componentID)
 	key, err := registry.OpenKey(registry.LOCAL_MACHINE, keyName, registry.READ)
 	if err != nil {
 		key.Close()
 		return "", err
 	}
-	var bufLength uint32 = TAPWIN32_MAX_REG_SIZE
+	var bufLength uint32 = TapWin32MaxRegSize
 	buf := make([]byte, bufLength)
 	name, _ := windows.UTF16FromString("Name")
 	var valtype uint32
@@ -84,29 +85,29 @@ func getTuntapName(componentId string) (string, error) {
 	return s, nil
 }
 
-func getTuntapComponentId(ifaceName string) (string, string, error) {
-	adapters, err := registry.OpenKey(registry.LOCAL_MACHINE, ADAPTER_KEY, registry.READ)
+func getTuntapComponentID(ifaceName string) (string, string, error) {
+	adapters, err := registry.OpenKey(registry.LOCAL_MACHINE, AdapterKey, registry.READ)
 	if err != nil {
 		return "", "", fmt.Errorf("failed to read adapter list: %v", err)
 	}
 	defer adapters.Close()
 	var i uint32
 	for i = 0; i < 1000; i++ {
-		var name_length uint32 = TAPWIN32_MAX_REG_SIZE
-		buf := make([]uint16, name_length)
+		var nameLength uint32 = TapWin32MaxRegSize
+		buf := make([]uint16, nameLength)
 		if err = windows.RegEnumKeyEx(
 			windows.Handle(adapters),
 			i,
 			&buf[0],
-			&name_length,
+			&nameLength,
 			nil,
 			nil,
 			nil,
 			nil); err != nil {
 			return "", "", fmt.Errorf("failed to read name: %v", err)
 		}
-		key_name := windows.UTF16ToString(buf[:])
-		adapter, err := registry.OpenKey(adapters, key_name, registry.READ)
+		keyName := windows.UTF16ToString(buf[:])
+		adapter, err := registry.OpenKey(adapters, keyName, registry.READ)
 		defer adapter.Close()
 		if err != nil {
 			continue
@@ -114,33 +115,33 @@ func getTuntapComponentId(ifaceName string) (string, string, error) {
 		name, _ := windows.UTF16FromString("ComponentId")
 		name2, _ := windows.UTF16FromString("NetCfgInstanceId")
 		var valtype uint32
-		var component_id = make([]byte, TAPWIN32_MAX_REG_SIZE)
-		var componentLen = uint32(len(component_id))
+		var componentID = make([]byte, TapWin32MaxRegSize)
+		var componentLen = uint32(len(componentID))
 		if err = windows.RegQueryValueEx(
 			windows.Handle(adapter),
 			&name[0],
 			nil,
 			&valtype,
-			&component_id[0],
+			&componentID[0],
 			&componentLen); err != nil {
 			continue
 		}
 
-		id := decodeUTF16(component_id)
-		if id == TUNTAP_COMPONENT_ID_0901 || id == TUNTAP_COMPONENT_ID_0801 {
+		id := decodeUTF16(componentID)
+		if id == TuntapComponentID0901 || id == TuntapComponentID0801 {
 			var valtype uint32
-			var netCfgInstanceId = make([]byte, TAPWIN32_MAX_REG_SIZE)
-			var netCfgInstanceIdLen = uint32(len(netCfgInstanceId))
+			var netCfgInstanceID = make([]byte, TapWin32MaxRegSize)
+			var netCfgInstanceIDLen = uint32(len(netCfgInstanceID))
 			if err = windows.RegQueryValueEx(
 				windows.Handle(adapter),
 				&name2[0],
 				nil,
 				&valtype,
-				&netCfgInstanceId[0],
-				&netCfgInstanceIdLen); err != nil {
+				&netCfgInstanceID[0],
+				&netCfgInstanceIDLen); err != nil {
 				return "", "", fmt.Errorf("failed to read net cfg instance id: %v", err)
 			}
-			s := decodeUTF16(netCfgInstanceId)
+			s := decodeUTF16(netCfgInstanceID)
 			log.Printf("TAP device component ID: %s", s)
 
 			devName, err := getTuntapName(s)
@@ -157,14 +158,15 @@ func getTuntapComponentId(ifaceName string) (string, string, error) {
 	return "", "", errors.New("not found component id")
 }
 
+// OpenTunDevice open tun
 func OpenTunDevice(name, addr, gw, mask string, dns []string, persist bool) (io.ReadWriteCloser, error) {
-	componentId, devName, err := getTuntapComponentId(name)
+	componentID, devName, err := getTuntapComponentID(name)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get component ID: %v", err)
 	}
 	log.Printf("TAP device name: %s", devName)
 
-	devId, _ := windows.UTF16FromString(fmt.Sprintf(`\\.\Global\%s.tap`, componentId))
+	devID, _ := windows.UTF16FromString(fmt.Sprintf(`\\.\Global\%s.tap`, componentID))
 	// set dhcp with netsh
 	cmd := exec.Command("netsh", "interface", "ip", "set", "address", devName, "dhcp")
 	cmd.Run()
@@ -172,7 +174,7 @@ func OpenTunDevice(name, addr, gw, mask string, dns []string, persist bool) (io.
 	cmd.Run()
 	// open
 	fd, err := windows.CreateFile(
-		&devId[0],
+		&devID[0],
 		windows.GENERIC_READ|windows.GENERIC_WRITE,
 		windows.FILE_SHARE_READ|windows.FILE_SHARE_WRITE,
 		nil,
@@ -196,7 +198,7 @@ func OpenTunDevice(name, addr, gw, mask string, dns []string, persist bool) (io.
 	addrParam = append(addrParam, lease...)
 	err = windows.DeviceIoControl(
 		fd,
-		TAP_WIN_IOCTL_CONFIG_DHCP_MASQ,
+		TapWinIoctlConfigDHCPMasq,
 		&addrParam[0],
 		uint32(len(addrParam)),
 		&addrParam[0],
@@ -207,9 +209,8 @@ func OpenTunDevice(name, addr, gw, mask string, dns []string, persist bool) (io.
 	if err != nil {
 		windows.Close(fd)
 		return nil, err
-	} else {
-		log.Printf("Set %s with net/mask: %s/%s through DHCP", devName, addr, mask)
 	}
+	log.Printf("Set %s with net/mask: %s/%s through DHCP", devName, addr, mask)
 
 	// set dns with dncp
 	dnsParam := []byte{6, 4}
@@ -222,7 +223,7 @@ func OpenTunDevice(name, addr, gw, mask string, dns []string, persist bool) (io.
 	}
 	err = windows.DeviceIoControl(
 		fd,
-		TAP_WIN_IOCTL_CONFIG_DHCP_SET_OPT,
+		TapWinIoctlConfigDHCPSetOpt,
 		&dnsParam[0],
 		uint32(len(dnsParam)),
 		&addrParam[0],
@@ -233,15 +234,14 @@ func OpenTunDevice(name, addr, gw, mask string, dns []string, persist bool) (io.
 	if err != nil {
 		windows.Close(fd)
 		return nil, err
-	} else {
-		log.Printf("Set %s with DNS: %s through DHCP", devName, strings.Join(dns, ","))
 	}
+	log.Printf("Set %s with DNS: %s through DHCP", devName, strings.Join(dns, ","))
 
 	// set connect.
 	inBuffer := []byte("\x01\x00\x00\x00")
 	err = windows.DeviceIoControl(
 		fd,
-		TAP_IOCTL_SET_MEDIA_STATUS,
+		TapIoctlSetMediaStatus,
 		&inBuffer[0],
 		uint32(len(inBuffer)),
 		&inBuffer[0],
@@ -309,12 +309,11 @@ func (dev *winTapDev) Read(data []byte) (int, error) {
 		if err != nil {
 			if err != windows.ERROR_IO_PENDING {
 				return 0, err
-			} else {
-				windows.WaitForSingleObject(dev.rOverlapped.HEvent, windows.INFINITE)
-				nr, err = getOverlappedResult(dev.fd, &dev.rOverlapped)
-				if err != nil {
-					return 0, err
-				}
+			}
+			windows.WaitForSingleObject(dev.rOverlapped.HEvent, windows.INFINITE)
+			nr, err = getOverlappedResult(dev.fd, &dev.rOverlapped)
+			if err != nil {
+				return 0, err
 			}
 		} else {
 			nr = int(done)
@@ -355,21 +354,19 @@ func (dev *winTapDev) Write(data []byte) (int, error) {
 	if err != nil {
 		if err != windows.ERROR_IO_PENDING {
 			return 0, err
-		} else {
-			windows.WaitForSingleObject(dev.wOverlapped.HEvent, windows.INFINITE)
-			nw, err = getOverlappedResult(dev.fd, &dev.wOverlapped)
-			if err != nil {
-				return 0, err
-			}
+		}
+		windows.WaitForSingleObject(dev.wOverlapped.HEvent, windows.INFINITE)
+		nw, err = getOverlappedResult(dev.fd, &dev.wOverlapped)
+		if err != nil {
+			return 0, err
 		}
 	} else {
 		nw = int(done)
 	}
 	if nw != packetL {
 		return 0, fmt.Errorf("write %d packet (%d bytes payload), return %d", packetL, payloadL, nw)
-	} else {
-		return payloadL, nil
 	}
+	return payloadL, nil
 }
 
 func getOverlappedResult(h windows.Handle, overlapped *windows.Overlapped) (int, error) {

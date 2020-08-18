@@ -6,7 +6,6 @@ package core
 */
 import "C"
 import (
-	"errors"
 	"fmt"
 	"io"
 	"math/rand"
@@ -84,7 +83,7 @@ func newTCPConn(pcb *C.struct_tcp_pcb, handler TCPConnHandler) (TCPConn, error) 
 	setTCPRecvCallback(pcb)
 	setTCPSentCallback(pcb)
 	setTCPErrCallback(pcb)
-	setTCPPollCallback(pcb, C.u8_t(TCP_POLL_INTERVAL))
+	setTCPPollCallback(pcb, C.u8_t(TCPPollInterval))
 
 	pipeReader, pipeWriter := io.Pipe()
 	conn := &tcpConn{
@@ -129,7 +128,7 @@ func newTCPConn(pcb *C.struct_tcp_pcb, handler TCPConnHandler) (TCPConn, error) 
 		}
 	}()
 
-	return conn, NewLWIPError(LWIP_ERR_OK)
+	return conn, NewLWIPError(ErrLwipOK)
 }
 
 func (conn *tcpConn) RemoteAddr() net.Addr {
@@ -162,7 +161,7 @@ func (conn *tcpConn) receiveCheck() error {
 	case tcpNewConn:
 		fallthrough
 	case tcpConnecting:
-		return NewLWIPError(LWIP_ERR_CONN)
+		return NewLWIPError(ErrLwipConn)
 	case tcpAborting:
 		fallthrough
 	case tcpClosed:
@@ -170,14 +169,13 @@ func (conn *tcpConn) receiveCheck() error {
 	case tcpReceiveClosed:
 		fallthrough
 	case tcpClosing:
-		return NewLWIPError(LWIP_ERR_CLSD)
+		return NewLWIPError(ErrLwipClsd)
 	case tcpErrored:
 		conn.abortInternal()
-		return NewLWIPError(LWIP_ERR_ABRT)
+		return NewLWIPError(ErrLwipAbrt)
 	default:
 		panic("unexpected error")
 	}
-	return nil
 }
 
 func (conn *tcpConn) Receive(data []byte) error {
@@ -186,10 +184,10 @@ func (conn *tcpConn) Receive(data []byte) error {
 	}
 	n, err := conn.sndPipeWriter.Write(data)
 	if err != nil {
-		return NewLWIPError(LWIP_ERR_CLSD)
+		return NewLWIPError(ErrLwipClsd)
 	}
 	C.tcp_recved(conn.pcb, C.u16_t(n))
-	return NewLWIPError(LWIP_ERR_OK)
+	return NewLWIPError(ErrLwipOK)
 }
 
 func (conn *tcpConn) Read(data []byte) (int, error) {
@@ -251,7 +249,6 @@ func (conn *tcpConn) writeCheck() error {
 	default:
 		panic("unexpected error")
 	}
-	return nil
 }
 
 func (conn *tcpConn) Write(data []byte) (int, error) {
@@ -278,7 +275,7 @@ func (conn *tcpConn) Write(data []byte) (int, error) {
 				lwipMutex.Unlock()
 				return totalWritten, err
 			}
-			data = data[written:len(data)]
+			data = data[written:]
 		}
 		lwipMutex.Unlock()
 		if len(data) == 0 {
@@ -326,7 +323,7 @@ func (conn *tcpConn) checkClosing() error {
 
 	if conn.state == tcpClosing {
 		conn.closeInternal()
-		return NewLWIPError(LWIP_ERR_OK)
+		return NewLWIPError(ErrLwipOK)
 	}
 	return nil
 }
@@ -337,7 +334,7 @@ func (conn *tcpConn) checkAborting() error {
 
 	if conn.state == tcpAborting {
 		conn.abortInternal()
-		return NewLWIPError(LWIP_ERR_ABRT)
+		return NewLWIPError(ErrLwipAbrt)
 	}
 	return nil
 }
@@ -367,7 +364,7 @@ func (conn *tcpConn) checkState() error {
 	// Signal the writer to try writting.
 	conn.canWrite.Broadcast()
 
-	return NewLWIPError(LWIP_ERR_OK)
+	return NewLWIPError(ErrLwipOK)
 }
 
 func (conn *tcpConn) Close() error {
@@ -420,9 +417,8 @@ func (conn *tcpConn) closeInternal() error {
 	err := C.tcp_close(conn.pcb)
 	if err == C.ERR_OK {
 		return nil
-	} else {
-		return errors.New(fmt.Sprintf("close TCP connection failed, lwip error code %d", int(err)))
 	}
+	return fmt.Errorf("close TCP connection failed, lwip error code %d", int(err))
 }
 
 // Never call this function outside of the lwIP thread since it calls

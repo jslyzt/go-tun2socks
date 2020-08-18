@@ -27,10 +27,10 @@ func udpRecvFn(arg unsafe.Pointer, pcb *C.struct_udp_pcb, p *C.struct_pbuf, addr
 		panic("invalid UDP address")
 	}
 
-	connId := udpConnId{
+	connID := udpConnID{
 		src: srcAddr.String(),
 	}
-	conn, found := udpConns.Load(connId)
+	conn, found := udpConns.Load(connID)
 	if !found {
 		if udpConnHandler == nil {
 			panic("must register a UDP connection handler")
@@ -45,7 +45,7 @@ func udpRecvFn(arg unsafe.Pointer, pcb *C.struct_udp_pcb, p *C.struct_pbuf, addr
 		if err != nil {
 			return
 		}
-		udpConns.Store(connId, conn)
+		udpConns.Store(connID, conn)
 	}
 
 	var buf []byte

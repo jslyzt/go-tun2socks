@@ -1,3 +1,6 @@
 package dns
 
-const COMMON_DNS_PORT = 53
+const (
+	// CommonDNSPort dns 端口
+	CommonDNSPort = 53
+)

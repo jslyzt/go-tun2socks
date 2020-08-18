@@ -40,17 +40,19 @@ package core
 //   ERR_ARG        = -16
 // } err_enum_t;
 
+// 错误定义
 const (
-	LWIP_ERR_OK int = iota
-	LWIP_ERR_ABRT
-	LWIP_ERR_CONN
-	LWIP_ERR_CLSD
+	ErrLwipOK int = iota
+	ErrLwipAbrt
+	ErrLwipConn
+	ErrLwipClsd
 )
 
 type lwipError struct {
 	Code int
 }
 
+// NewLWIPError 新建错误
 func NewLWIPError(code int) error {
 	return &lwipError{Code: code}
 }

@@ -19,13 +19,17 @@ type UDPConnHandler interface {
 	ReceiveTo(conn UDPConn, data []byte, addr *net.UDPAddr) error
 }
 
-var tcpConnHandler TCPConnHandler
-var udpConnHandler UDPConnHandler
+var (
+	tcpConnHandler TCPConnHandler
+	udpConnHandler UDPConnHandler
+)
 
+// RegisterTCPConnHandler 注册tcp处理
 func RegisterTCPConnHandler(h TCPConnHandler) {
 	tcpConnHandler = h
 }
 
+// RegisterUDPConnHandler 注册udp处理
 func RegisterUDPConnHandler(h UDPConnHandler) {
 	udpConnHandler = h
 }

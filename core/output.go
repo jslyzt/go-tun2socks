@@ -32,8 +32,12 @@ import (
 	"errors"
 )
 
-var OutputFn func([]byte) (int, error)
+// 变量定义
+var (
+	OutputFn func([]byte) (int, error)
+)
 
+// RegisterOutputFn 注册输出函数
 func RegisterOutputFn(fn func([]byte) (int, error)) {
 	OutputFn = fn
 	C.set_output()

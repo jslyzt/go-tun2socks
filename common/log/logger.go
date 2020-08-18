@@ -1,17 +1,20 @@
 package log
 
-type LogLevel uint8
+// Level 日志等级
+type Level uint8
 
+// 等级定义
 const (
-	DEBUG LogLevel = iota
+	DEBUG Level = iota
 	INFO
 	WARN
 	ERROR
 	NONE
 )
 
+// Logger 日志
 type Logger interface {
-	SetLevel(level LogLevel)
+	SetLevel(level Level)
 	Debugf(msg string, args ...interface{})
 	Infof(msg string, args ...interface{})
 	Warnf(msg string, args ...interface{})

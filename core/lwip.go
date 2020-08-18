@@ -15,9 +15,13 @@ import (
 	"unsafe"
 )
 
-const CHECK_TIMEOUTS_INTERVAL = 250 // in millisecond
-const TCP_POLL_INTERVAL = 8         // poll every 4 seconds
+// 常量定义
+const (
+	CheckTimeoutsInterval = 250 // in millisecond
+	TCPPollInterval       = 8   // poll every 4 seconds
+)
 
+// LWIPStack lwip栈
 type LWIPStack interface {
 	Write([]byte) (int, error)
 	Close() error
@@ -80,7 +84,7 @@ func NewLWIPStack() LWIPStack {
 	go func() {
 		for {
 			select {
-			case <-time.After(CHECK_TIMEOUTS_INTERVAL * time.Millisecond):
+			case <-time.After(CheckTimeoutsInterval * time.Millisecond):
 				lwipMutex.Lock()
 				C.sys_check_timeouts()
 				lwipMutex.Unlock()

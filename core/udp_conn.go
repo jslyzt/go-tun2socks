@@ -123,7 +123,7 @@ func (conn *udpConn) ReceiveTo(data []byte, addr *net.UDPAddr) error {
 	}
 	err := conn.handler.ReceiveTo(conn, data, addr)
 	if err != nil {
-		return errors.New(fmt.Sprintf("write proxy failed: %v", err))
+		return fmt.Errorf("write proxy failed: %v", err)
 	}
 	return nil
 }
@@ -147,12 +147,12 @@ func (conn *udpConn) WriteFrom(data []byte, addr *net.UDPAddr) (int, error) {
 }
 
 func (conn *udpConn) Close() error {
-	connId := udpConnId{
+	connID := udpConnID{
 		src: conn.LocalAddr().String(),
 	}
 	conn.Lock()
 	conn.state = udpClosed
 	conn.Unlock()
-	udpConns.Delete(connId)
+	udpConns.Delete(connID)
 	return nil
 }

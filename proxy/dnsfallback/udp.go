@@ -5,8 +5,8 @@ import (
 	"errors"
 	"net"
 
-	"github.com/eycorsican/go-tun2socks/common/dns"
-	"github.com/eycorsican/go-tun2socks/core"
+	"go-tun2socks/common/dns"
+	"go-tun2socks/core"
 )
 
 // UDP handler that intercepts DNS queries and replies with a truncated response (TC bit)
@@ -22,12 +22,13 @@ const (
 	dnsMaskRcode    = uint8(0x0F)
 )
 
+// NewUDPHandler 新建
 func NewUDPHandler() core.UDPConnHandler {
 	return &udpHandler{}
 }
 
 func (h *udpHandler) Connect(conn core.UDPConn, udpAddr *net.UDPAddr) error {
-	if udpAddr.Port != dns.COMMON_DNS_PORT {
+	if udpAddr.Port != dns.CommonDNSPort {
 		return errors.New("Cannot handle non-DNS packet")
 	}
 	return nil

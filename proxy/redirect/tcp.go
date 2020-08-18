@@ -4,8 +4,8 @@ import (
 	"io"
 	"net"
 
-	"github.com/eycorsican/go-tun2socks/common/log"
-	"github.com/eycorsican/go-tun2socks/core"
+	"go-tun2socks/common/log"
+	"go-tun2socks/core"
 )
 
 // To do a benchmark using iperf3 locally, you may follow these steps:
@@ -37,6 +37,7 @@ type duplexConn interface {
 	CloseRead() error
 }
 
+// NewTCPHandler 新建
 func NewTCPHandler(target string) core.TCPConnHandler {
 	return &tcpHandler{target: target}
 }

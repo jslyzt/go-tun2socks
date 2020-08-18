@@ -29,9 +29,9 @@ func tcpAcceptFn(arg unsafe.Pointer, newpcb *C.struct_tcp_pcb, err C.err_t) C.er
 
 	if _, nerr := newTCPConn(newpcb, tcpConnHandler); nerr != nil {
 		switch nerr.(*lwipError).Code {
-		case LWIP_ERR_ABRT:
+		case ErrLwipAbrt:
 			return C.ERR_ABRT
-		case LWIP_ERR_OK:
+		case ErrLwipOK:
 			return C.ERR_OK
 		default:
 			return C.ERR_CONN
@@ -67,9 +67,9 @@ func tcpRecvFn(arg unsafe.Pointer, tpcb *C.struct_tcp_pcb, p *C.struct_pbuf, err
 		// Peer closed, EOF.
 		err := conn.(TCPConn).LocalClosed()
 		switch err.(*lwipError).Code {
-		case LWIP_ERR_ABRT:
+		case ErrLwipAbrt:
 			return C.ERR_ABRT
-		case LWIP_ERR_OK:
+		case ErrLwipOK:
 			return C.ERR_OK
 		default:
 			panic("unexpected error")
@@ -89,16 +89,16 @@ func tcpRecvFn(arg unsafe.Pointer, tpcb *C.struct_tcp_pcb, p *C.struct_pbuf, err
 	rerr := conn.(TCPConn).Receive(buf[:totlen])
 	if rerr != nil {
 		switch rerr.(*lwipError).Code {
-		case LWIP_ERR_ABRT:
+		case ErrLwipAbrt:
 			return C.ERR_ABRT
-		case LWIP_ERR_OK:
+		case ErrLwipOK:
 			return C.ERR_OK
-		case LWIP_ERR_CONN:
+		case ErrLwipConn:
 			shouldFreePbuf = false
 			// Tell lwip we can't receive data at the moment,
 			// lwip will store it and try again later.
 			return C.ERR_CONN
-		case LWIP_ERR_CLSD:
+		case ErrLwipClsd:
 			// lwip won't handle ERR_CLSD error for us, manually
 			// shuts down the rx side.
 			C.tcp_recved(tpcb, p.tot_len)
@@ -117,9 +117,9 @@ func tcpSentFn(arg unsafe.Pointer, tpcb *C.struct_tcp_pcb, len C.u16_t) C.err_t 
 	if conn, ok := tcpConns.Load(getConnKeyVal(arg)); ok {
 		err := conn.(TCPConn).Sent(uint16(len))
 		switch err.(*lwipError).Code {
-		case LWIP_ERR_ABRT:
+		case ErrLwipAbrt:
 			return C.ERR_ABRT
-		case LWIP_ERR_OK:
+		case ErrLwipOK:
 			return C.ERR_OK
 		default:
 			panic("unexpected error")
@@ -141,7 +141,7 @@ func tcpErrFn(arg unsafe.Pointer, err C.err_t) {
 			// The connection was reset by the remote host
 			conn.(TCPConn).Err(errors.New("connection reseted"))
 		default:
-			conn.(TCPConn).Err(errors.New(fmt.Sprintf("lwip error code %v", int(err))))
+			conn.(TCPConn).Err(fmt.Errorf("lwip error code %v", int(err)))
 		}
 	}
 }
@@ -151,9 +151,9 @@ func tcpPollFn(arg unsafe.Pointer, tpcb *C.struct_tcp_pcb) C.err_t {
 	if conn, ok := tcpConns.Load(getConnKeyVal(arg)); ok {
 		err := conn.(TCPConn).Poll()
 		switch err.(*lwipError).Code {
-		case LWIP_ERR_ABRT:
+		case ErrLwipAbrt:
 			return C.ERR_ABRT
-		case LWIP_ERR_OK:
+		case ErrLwipOK:
 			return C.ERR_OK
 		default:
 			panic("unexpected error")

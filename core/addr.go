@@ -24,11 +24,11 @@ func ipAddrATON(cp string, addr *C.struct_ip_addr) error {
 	defer C.free(unsafe.Pointer(ccp))
 	if r := C.ipaddr_aton(ccp, addr); r == 0 {
 		return errors.New("failed to convert IP address")
-	} else {
-		return nil
 	}
+	return nil
 }
 
+// ParseTCPAddr 解析tcp地址
 func ParseTCPAddr(addr string, port uint16) *net.TCPAddr {
 	netAddr, err := net.ResolveTCPAddr("tcp", net.JoinHostPort(addr, strconv.Itoa(int(port))))
 	if err != nil {
@@ -37,6 +37,7 @@ func ParseTCPAddr(addr string, port uint16) *net.TCPAddr {
 	return netAddr
 }
 
+// ParseUDPAddr 解析udp地址
 func ParseUDPAddr(addr string, port uint16) *net.UDPAddr {
 	netAddr, err := net.ResolveUDPAddr("udp", net.JoinHostPort(addr, strconv.Itoa(int(port))))
 	if err != nil {

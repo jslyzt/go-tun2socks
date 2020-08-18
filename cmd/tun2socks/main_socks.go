@@ -5,14 +5,14 @@ package main
 import (
 	"net"
 
-	"github.com/eycorsican/go-tun2socks/common/log"
-	"github.com/eycorsican/go-tun2socks/core"
-	"github.com/eycorsican/go-tun2socks/proxy/socks"
+	"go-tun2socks/common/log"
+	"go-tun2socks/core"
+	"go-tun2socks/proxy/socks"
 )
 
 func init() {
 	args.addFlag(fProxyServer)
-	args.addFlag(fUdpTimeout)
+	args.addFlag(fUDPTimeout)
 
 	registerHandlerCreater("socks", func() {
 		// Verify proxy server address.
@@ -24,6 +24,6 @@ func init() {
 		proxyPort := uint16(proxyAddr.Port)
 
 		core.RegisterTCPConnHandler(socks.NewTCPHandler(proxyHost, proxyPort))
-		core.RegisterUDPConnHandler(socks.NewUDPHandler(proxyHost, proxyPort, *args.UdpTimeout))
+		core.RegisterUDPConnHandler(socks.NewUDPHandler(proxyHost, proxyPort, *args.UDPTimeout))
 	})
 }

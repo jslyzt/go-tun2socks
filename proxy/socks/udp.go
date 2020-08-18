@@ -8,12 +8,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/eycorsican/go-tun2socks/common/log"
-	"github.com/eycorsican/go-tun2socks/core"
+	"go-tun2socks/common/log"
+	"go-tun2socks/core"
 )
 
 // max IP packet size - min IP header size - min UDP header size - min SOCKS5 header size
-const maxUdpPayloadSize = 65535 - 20 - 8 - 7
+const maxUDPPayloadSize = 65535 - 20 - 8 - 7
 
 type udpHandler struct {
 	sync.Mutex
@@ -26,6 +26,7 @@ type udpHandler struct {
 	timeout     time.Duration
 }
 
+// NewUDPHandler 新建
 func NewUDPHandler(proxyHost string, proxyPort uint16, timeout time.Duration) core.UDPConnHandler {
 	return &udpHandler{
 		proxyHost:   proxyHost,
@@ -54,7 +55,7 @@ func (h *udpHandler) handleTCP(conn core.UDPConn, c net.Conn) {
 }
 
 func (h *udpHandler) fetchUDPInput(conn core.UDPConn, input net.PacketConn) {
-	buf := core.NewBytes(maxUdpPayloadSize)
+	buf := core.NewBytes(maxUDPPayloadSize)
 
 	defer func() {
 		h.Close(conn)
@@ -109,7 +110,7 @@ func (h *udpHandler) connectInternal(conn core.UDPConn, dest string) error {
 	}
 
 	c.Write(append([]byte{5, socks5UDPAssociate, 0}, []byte{1, 0, 0, 0, 0, 0, 0}...))
-	
+
 	// read VER REP RSV ATYP BND.ADDR BND.PORT
 	if _, err := io.ReadFull(c, buf[:3]); err != nil {
 		return err
@@ -162,13 +163,12 @@ func (h *udpHandler) ReceiveTo(conn core.UDPConn, data []byte, addr *net.UDPAddr
 		_, err := pc.WriteTo(buf, remoteAddr)
 		if err != nil {
 			h.Close(conn)
-			return errors.New(fmt.Sprintf("write remote failed: %v", err))
+			return fmt.Errorf("write remote failed: %v", err)
 		}
 		return nil
-	} else {
-		h.Close(conn)
-		return errors.New(fmt.Sprintf("proxy connection %v->%v does not exists", conn.LocalAddr(), addr))
 	}
+	h.Close(conn)
+	return fmt.Errorf("proxy connection %v->%v does not exists", conn.LocalAddr(), addr)
 }
 
 func (h *udpHandler) Close(conn core.UDPConn) {

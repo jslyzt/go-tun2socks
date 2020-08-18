@@ -10,10 +10,11 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"github.com/eycorsican/go-tun2socks/common/log"
+	"go-tun2socks/common/log"
 )
 
-func BlockOutsideDns(tunName string) error {
+// BlockOutsideDNS block outside dns
+func BlockOutsideDNS(tunName string) error {
 	var engine uintptr
 	session := FWPM_SESSION0{
 		Flags: FWPM_SESSION_FLAG_DYNAMIC,
@@ -42,7 +43,7 @@ func BlockOutsideDns(tunName string) error {
 		return fmt.Errorf("failed to add sublayer: %v", err)
 	}
 
-	var filterId uint64
+	var filterID uint64
 
 	// Block all IPv6 traffic.
 	blockV6FilterDisplayData, err := CreateDisplayData("DnsBlocker", "Block all IPv6 traffic.")
@@ -61,7 +62,7 @@ func BlockOutsideDns(tunName string) error {
 			Value: uintptr(13),
 		},
 	}
-	err = FwpmFilterAdd0(engine, &blockV6Filter, 0, &filterId)
+	err = FwpmFilterAdd0(engine, &blockV6Filter, 0, &filterID)
 	if err != nil {
 		return fmt.Errorf("failed to add block v6 filter: %v", err)
 	}
@@ -100,7 +101,7 @@ func BlockOutsideDns(tunName string) error {
 			Value: uintptr(11),
 		},
 	}
-	err = FwpmFilterAdd0(engine, &tapWhitelistFilter, 0, &filterId)
+	err = FwpmFilterAdd0(engine, &tapWhitelistFilter, 0, &filterID)
 	if err != nil {
 		return fmt.Errorf("failed to add tap device whitelist filter: %v", err)
 	}
@@ -142,7 +143,7 @@ func BlockOutsideDns(tunName string) error {
 			Value: uintptr(10),
 		},
 	}
-	err = FwpmFilterAdd0(engine, &blockAllUDP53Filter, 0, &filterId)
+	err = FwpmFilterAdd0(engine, &blockAllUDP53Filter, 0, &filterID)
 	if err != nil {
 		return fmt.Errorf("failed to add filter: %v", err)
 	}

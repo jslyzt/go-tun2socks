@@ -7,8 +7,8 @@ import (
 
 	"golang.org/x/net/proxy"
 
-	"github.com/eycorsican/go-tun2socks/common/log"
-	"github.com/eycorsican/go-tun2socks/core"
+	"go-tun2socks/common/log"
+	"go-tun2socks/core"
 )
 
 type tcpHandler struct {
@@ -18,6 +18,7 @@ type tcpHandler struct {
 	proxyPort uint16
 }
 
+// NewTCPHandler 新建
 func NewTCPHandler(proxyHost string, proxyPort uint16) core.TCPConnHandler {
 	return &tcpHandler{
 		proxyHost: proxyHost,

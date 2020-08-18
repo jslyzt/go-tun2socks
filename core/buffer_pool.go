@@ -4,22 +4,29 @@ import (
 	"sync"
 )
 
-var pool *sync.Pool
+var (
+	pool *sync.Pool
+)
 
-const BufSize = 2 * 1024
+// 常量定义
+const (
+	BufSize = 2 * 1024
+)
 
+// SetBufferPool 设置pool
 func SetBufferPool(p *sync.Pool) {
 	pool = p
 }
 
+// NewBytes 新建bytes
 func NewBytes(size int) []byte {
 	if size <= BufSize {
 		return pool.Get().([]byte)
-	} else {
-		return make([]byte, size)
 	}
+	return make([]byte, size)
 }
 
+// FreeBytes 释放bytes
 func FreeBytes(b []byte) {
 	if len(b) >= BufSize {
 		pool.Put(b)

@@ -6,6 +6,6 @@ import (
 
 var udpConns sync.Map
 
-type udpConnId struct {
+type udpConnID struct {
 	src string
 }

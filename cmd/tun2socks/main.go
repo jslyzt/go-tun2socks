@@ -11,63 +11,76 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/eycorsican/go-tun2socks/common/dns/blocker"
-	"github.com/eycorsican/go-tun2socks/common/log"
-	_ "github.com/eycorsican/go-tun2socks/common/log/simple" // Register a simple logger.
-	"github.com/eycorsican/go-tun2socks/core"
-	"github.com/eycorsican/go-tun2socks/tun"
+	"go-tun2socks/common/dns/blocker"
+	"go-tun2socks/common/log"
+	_ "go-tun2socks/common/log/simple" // Register a simple logger.
+	"go-tun2socks/core"
+	"go-tun2socks/tun"
 )
 
-var version = "undefined"
+// 常量定义
+const (
+	MTU = 1500
+)
 
-var handlerCreater = make(map[string]func(), 0)
+const (
+	fProxyServer cmdFlag = iota
+	fUDPTimeout
+)
+
+// 变量定义
+var (
+	version         = "undefined"
+	handlerCreater  = make(map[string]func(), 0)
+	postFlagsInitFn = make([]func(), 0)
+	args            = new(CmdArgs)
+	lwipWriter      io.Writer
+
+	flagCreaters = map[cmdFlag]func(){
+		fProxyServer: func() {
+			if args.ProxyServer == nil {
+				args.ProxyServer = flag.String("proxyServer", "1.2.3.4:1087", "Proxy server address")
+			}
+		},
+		fUDPTimeout: func() {
+			if args.UDPTimeout == nil {
+				args.UDPTimeout = flag.Duration("udpTimeout", 1*time.Minute, "UDP session timeout")
+			}
+		},
+	}
+)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type (
+	cmdFlag uint
+
+	// CmdArgs cmd参数
+	CmdArgs struct {
+		Version         *bool
+		TunName         *string
+		TunAddr         *string
+		TunGw           *string
+		TunMask         *string
+		TunDNS          *string
+		TunPersist      *bool
+		BlockOutsideDNS *bool
+		ProxyType       *string
+		ProxyServer     *string
+		ProxyHost       *string
+		ProxyPort       *uint16
+		UDPTimeout      *time.Duration
+		LogLevel        *string
+		DNSFallback     *bool
+	}
+)
 
 func registerHandlerCreater(name string, creater func()) {
 	handlerCreater[name] = creater
 }
 
-var postFlagsInitFn = make([]func(), 0)
-
 func addPostFlagsInitFn(fn func()) {
 	postFlagsInitFn = append(postFlagsInitFn, fn)
-}
-
-type CmdArgs struct {
-	Version         *bool
-	TunName         *string
-	TunAddr         *string
-	TunGw           *string
-	TunMask         *string
-	TunDns          *string
-	TunPersist      *bool
-	BlockOutsideDns *bool
-	ProxyType       *string
-	ProxyServer     *string
-	ProxyHost       *string
-	ProxyPort       *uint16
-	UdpTimeout      *time.Duration
-	LogLevel        *string
-	DnsFallback     *bool
-}
-
-type cmdFlag uint
-
-const (
-	fProxyServer cmdFlag = iota
-	fUdpTimeout
-)
-
-var flagCreaters = map[cmdFlag]func(){
-	fProxyServer: func() {
-		if args.ProxyServer == nil {
-			args.ProxyServer = flag.String("proxyServer", "1.2.3.4:1087", "Proxy server address")
-		}
-	},
-	fUdpTimeout: func() {
-		if args.UdpTimeout == nil {
-			args.UdpTimeout = flag.Duration("udpTimeout", 1*time.Minute, "UDP session timeout")
-		}
-	},
 }
 
 func (a *CmdArgs) addFlag(f cmdFlag) {
@@ -78,13 +91,7 @@ func (a *CmdArgs) addFlag(f cmdFlag) {
 	}
 }
 
-var args = new(CmdArgs)
-
-var lwipWriter io.Writer
-
-const (
-	MTU = 1500
-)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func main() {
 	args.Version = flag.Bool("version", false, "Print version")
@@ -92,9 +99,9 @@ func main() {
 	args.TunAddr = flag.String("tunAddr", "10.255.0.2", "TUN interface address")
 	args.TunGw = flag.String("tunGw", "10.255.0.1", "TUN interface gateway")
 	args.TunMask = flag.String("tunMask", "255.255.255.0", "TUN interface netmask, it should be a prefixlen (a number) for IPv6 address")
-	args.TunDns = flag.String("tunDns", "8.8.8.8,8.8.4.4", "DNS resolvers for TUN interface (only need on Windows)")
+	args.TunDNS = flag.String("tunDns", "8.8.8.8,8.8.4.4", "DNS resolvers for TUN interface (only need on Windows)")
 	args.TunPersist = flag.Bool("tunPersist", false, "Persist TUN interface after the program exits or the last open file descriptor is closed (Linux only)")
-	args.BlockOutsideDns = flag.Bool("blockOutsideDns", false, "Prevent DNS leaks by blocking plaintext DNS queries going out through non-TUN interface (may require admin privileges) (Windows only) ")
+	args.BlockOutsideDNS = flag.Bool("blockOutsideDns", false, "Prevent DNS leaks by blocking plaintext DNS queries going out through non-TUN interface (may require admin privileges) (Windows only) ")
 	args.ProxyType = flag.String("proxyType", "socks", "Proxy handler type")
 	args.LogLevel = flag.String("loglevel", "info", "Logging level. (debug, info, warn, error, none)")
 
@@ -129,14 +136,14 @@ func main() {
 	}
 
 	// Open the tun device.
-	dnsServers := strings.Split(*args.TunDns, ",")
+	dnsServers := strings.Split(*args.TunDNS, ",")
 	tunDev, err := tun.OpenTunDevice(*args.TunName, *args.TunAddr, *args.TunGw, *args.TunMask, dnsServers, *args.TunPersist)
 	if err != nil {
 		log.Fatalf("failed to open tun device: %v", err)
 	}
 
-	if runtime.GOOS == "windows" && *args.BlockOutsideDns {
-		if err := blocker.BlockOutsideDns(*args.TunName); err != nil {
+	if runtime.GOOS == "windows" && *args.BlockOutsideDNS {
+		if err := blocker.BlockOutsideDNS(*args.TunName); err != nil {
 			log.Fatalf("failed to block outside DNS: %v", err)
 		}
 	}
@@ -151,7 +158,7 @@ func main() {
 		log.Fatalf("unsupported proxy type")
 	}
 
-	if args.DnsFallback != nil && *args.DnsFallback {
+	if args.DNSFallback != nil && *args.DNSFallback {
 		// Override the UDP handler with a DNS-over-TCP (fallback) UDP handler.
 		if creater, found := handlerCreater["dnsfallback"]; found {
 			creater()

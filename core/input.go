@@ -5,9 +5,7 @@ package core
 #include "lwip/pbuf.h"
 #include "lwip/tcp.h"
 
-err_t
-input(struct pbuf *p)
-{
+err_t input(struct pbuf *p) {
 	return (*netif_list).input(p, netif_list);
 }
 */
@@ -28,9 +26,9 @@ const (
 type proto byte
 
 const (
-	proto_icmp = 1
-	proto_tcp  = 6
-	proto_udp  = 17
+	protoIcmp = 1
+	protoTCP  = 6
+	protoUDP  = 17
 )
 
 func peekIPVer(p []byte) (ipver, error) {
@@ -104,7 +102,7 @@ func input(pkt []byte) (int, error) {
 
 	var buf *C.struct_pbuf
 
-	if nextProto == proto_udp && !(moreFrags(ipv, pkt) || fragOffset(ipv, pkt) > 0) {
+	if nextProto == protoUDP && !(moreFrags(ipv, pkt) || fragOffset(ipv, pkt) > 0) {
 		// Copying data is not necessary for unfragmented UDP packets, and we would like to
 		// have all data in one pbuf.
 		buf = C.pbuf_alloc_reference(unsafe.Pointer(&pkt[0]), C.u16_t(len(pkt)), C.PBUF_REF)

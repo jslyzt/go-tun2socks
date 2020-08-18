@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/eycorsican/go-tun2socks/common/log"
-	"github.com/eycorsican/go-tun2socks/core"
+	"go-tun2socks/common/log"
+	"go-tun2socks/core"
 )
 
 type udpHandler struct {
@@ -20,6 +20,7 @@ type udpHandler struct {
 	target         string
 }
 
+// NewUDPHandler 新建
 func NewUDPHandler(target string, timeout time.Duration) core.UDPConnHandler {
 	return &udpHandler{
 		timeout:        timeout,
@@ -83,9 +84,8 @@ func (h *udpHandler) ReceiveTo(conn core.UDPConn, data []byte, addr *net.UDPAddr
 			return errors.New("failed to write UDP data")
 		}
 		return nil
-	} else {
-		return errors.New(fmt.Sprintf("proxy connection %v->%v does not exists", conn.LocalAddr(), addr))
 	}
+	return fmt.Errorf("proxy connection %v->%v does not exists", conn.LocalAddr(), addr)
 }
 
 func (h *udpHandler) Close(conn core.UDPConn) {

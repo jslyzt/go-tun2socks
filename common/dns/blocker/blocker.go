@@ -6,6 +6,7 @@ import (
 	"errors"
 )
 
-func BlockOutsideDns(tunName string) error {
+// BlockOutsideDNS block outside dns
+func BlockOutsideDNS(tunName string) error {
 	return errors.New("not implemented")
 }
