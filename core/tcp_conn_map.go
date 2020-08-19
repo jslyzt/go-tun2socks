@@ -5,27 +5,19 @@ package core
 #include "lwip/tcp.h"
 #include <stdlib.h>
 
-void*
-new_conn_key_arg()
-{
+void* new_conn_key_arg() {
 	return malloc(sizeof(uint32_t));
 }
 
-void
-free_conn_key_arg(void *arg)
-{
+void free_conn_key_arg(void *arg) {
 	free(arg);
 }
 
-void
-set_conn_key_val(void *arg, uint32_t val)
-{
+void set_conn_key_val(void *arg, uint32_t val) {
 	*((uint32_t*)arg) = val;
 }
 
-uint32_t
-get_conn_key_val(void *arg)
-{
+uint32_t get_conn_key_val(void *arg) {
 	return *((uint32_t*)arg);
 }
 */

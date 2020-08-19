@@ -3,37 +3,6 @@
  * DHCPv6 protocol definitions
  */
 
-/*
- * Copyright (c) 2017 Simon Goldschmidt <goldsimon@gmx.de>
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
- *
- * This file is part of the lwIP TCP/IP stack.
- *
- * Author: Simon Goldschmidt <goldsimon@gmx.de>
- *
- */
 #ifndef LWIP_HDR_PROT_DHCP6_H
 #define LWIP_HDR_PROT_DHCP6_H
 
@@ -47,7 +16,7 @@ extern "C" {
 #define DHCP6_SERVER_PORT  547
 
 
- /* DHCPv6 message item offsets and length */
+/* DHCPv6 message item offsets and length */
 #define DHCP6_TRANSACTION_ID_LEN   3
 
 #ifdef PACK_STRUCT_USE_INCLUDES
@@ -55,11 +24,10 @@ extern "C" {
 #endif
 PACK_STRUCT_BEGIN
 /** minimum set of fields of any DHCPv6 message */
-struct dhcp6_msg
-{
-  PACK_STRUCT_FLD_8(u8_t msgtype);
-  PACK_STRUCT_FLD_8(u8_t transaction_id[DHCP6_TRANSACTION_ID_LEN]);
-  /* options follow */
+struct dhcp6_msg {
+    PACK_STRUCT_FLD_8(u8_t msgtype);
+    PACK_STRUCT_FLD_8(u8_t transaction_id[DHCP6_TRANSACTION_ID_LEN]);
+    /* options follow */
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
 #ifdef PACK_STRUCT_USE_INCLUDES
@@ -69,9 +37,9 @@ PACK_STRUCT_END
 
 /* DHCP6 client states */
 typedef enum {
-  DHCP6_STATE_OFF               = 0,
-  DHCP6_STATE_STATELESS_IDLE    = 1,
-  DHCP6_STATE_REQUESTING_CONFIG = 2
+    DHCP6_STATE_OFF               = 0,
+    DHCP6_STATE_STATELESS_IDLE    = 1,
+    DHCP6_STATE_REQUESTING_CONFIG = 2
 } dhcp6_state_enum_t;
 
 /* DHCPv6 message types */

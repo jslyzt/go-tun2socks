@@ -1,36 +1,5 @@
 /*
  * mppe.h - Definitions for MPPE
- *
- * Copyright (c) 2008 Paul Mackerras. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The name(s) of the authors of this software must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission.
- *
- * 4. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by Paul Mackerras
- *     <paulus@samba.org>".
- *
- * THE AUTHORS OF THIS SOFTWARE DISCLAIM ALL WARRANTIES WITH REGARD TO
- * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS, IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY
- * SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
- * AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
- * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 #include "netif/ppp/ppp_opts.h"
@@ -136,42 +105,42 @@ extern "C" {
 #define SHA1_PAD_SIZE 40
 
 static const u8_t mppe_sha1_pad1[SHA1_PAD_SIZE] = {
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 static const u8_t mppe_sha1_pad2[SHA1_PAD_SIZE] = {
-  0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2,
-  0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2,
-  0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2,
-  0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2
+    0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2,
+    0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2,
+    0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2,
+    0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2, 0xf2
 };
 
 /*
  * State for an MPPE (de)compressor.
  */
 typedef struct ppp_mppe_state {
-	lwip_arc4_context arc4;
-	u8_t master_key[MPPE_MAX_KEY_LEN];
-	u8_t session_key[MPPE_MAX_KEY_LEN];
-	u8_t keylen;                /* key length in bytes */
-	/* NB: 128-bit == 16, 40-bit == 8!
-	 * If we want to support 56-bit, the unit has to change to bits
-	 */
-	u8_t bits;                  /* MPPE control bits */
-	u16_t ccount;               /* 12-bit coherency count (seqno)  */
-	u16_t sanity_errors;        /* take down LCP if too many */
-	unsigned int stateful  :1;  /* stateful mode flag */
-	unsigned int discard   :1;  /* stateful mode packet loss flag */
+    lwip_arc4_context arc4;
+    u8_t master_key[MPPE_MAX_KEY_LEN];
+    u8_t session_key[MPPE_MAX_KEY_LEN];
+    u8_t keylen;                /* key length in bytes */
+    /* NB: 128-bit == 16, 40-bit == 8!
+     * If we want to support 56-bit, the unit has to change to bits
+     */
+    u8_t bits;                  /* MPPE control bits */
+    u16_t ccount;               /* 12-bit coherency count (seqno)  */
+    u16_t sanity_errors;        /* take down LCP if too many */
+    unsigned int stateful  : 1; /* stateful mode flag */
+    unsigned int discard   : 1; /* stateful mode packet loss flag */
 } ppp_mppe_state;
 
-void mppe_set_key(ppp_pcb *pcb, ppp_mppe_state *state, u8_t *key);
-void mppe_init(ppp_pcb *pcb, ppp_mppe_state *state, u8_t options);
-void mppe_comp_reset(ppp_pcb *pcb, ppp_mppe_state *state);
-err_t mppe_compress(ppp_pcb *pcb, ppp_mppe_state *state, struct pbuf **pb, u16_t protocol);
-void mppe_decomp_reset(ppp_pcb *pcb, ppp_mppe_state *state);
-err_t mppe_decompress(ppp_pcb *pcb, ppp_mppe_state *state, struct pbuf **pb);
+void mppe_set_key(ppp_pcb* pcb, ppp_mppe_state* state, u8_t* key);
+void mppe_init(ppp_pcb* pcb, ppp_mppe_state* state, u8_t options);
+void mppe_comp_reset(ppp_pcb* pcb, ppp_mppe_state* state);
+err_t mppe_compress(ppp_pcb* pcb, ppp_mppe_state* state, struct pbuf** pb, u16_t protocol);
+void mppe_decomp_reset(ppp_pcb* pcb, ppp_mppe_state* state);
+err_t mppe_decompress(ppp_pcb* pcb, ppp_mppe_state* state, struct pbuf** pb);
 
 #ifdef __cplusplus
 }

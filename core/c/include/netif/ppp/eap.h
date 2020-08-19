@@ -1,23 +1,6 @@
 /*
  * eap.h - Extensible Authentication Protocol for PPP (RFC 2284)
  *
- * Copyright (c) 2001 by Sun Microsystems, Inc.
- * All rights reserved.
- *
- * Non-exclusive rights to redistribute, modify, translate, and use
- * this software in source and binary forms, in whole or in part, is
- * hereby granted, provided that the above copyright notice is
- * duplicated in any source form, and that neither the name of the
- * copyright holder nor the author is used to endorse or promote
- * products derived from this software.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Original version by James Carlson
- *
- * $Id: eap.h,v 1.2 2003/06/11 23:56:26 paulus Exp $
  */
 
 #include "netif/ppp/ppp_opts.h"
@@ -99,50 +82,50 @@ extern "C" {
  * Complete EAP state for one PPP session.
  */
 enum eap_state_code {
-	eapInitial = 0,	/* No EAP authentication yet requested */
-	eapPending,	/* Waiting for LCP (no timer) */
-	eapClosed,	/* Authentication not in use */
-	eapListen,	/* Client ready (and timer running) */
-	eapIdentify,	/* EAP Identify sent */
-	eapSRP1,	/* Sent EAP SRP-SHA1 Subtype 1 */
-	eapSRP2,	/* Sent EAP SRP-SHA1 Subtype 2 */
-	eapSRP3,	/* Sent EAP SRP-SHA1 Subtype 3 */
-	eapMD5Chall,	/* Sent MD5-Challenge */
-	eapOpen,	/* Completed authentication */
-	eapSRP4,	/* Sent EAP SRP-SHA1 Subtype 4 */
-	eapBadAuth	/* Failed authentication */
+    eapInitial = 0,	/* No EAP authentication yet requested */
+    eapPending,	/* Waiting for LCP (no timer) */
+    eapClosed,	/* Authentication not in use */
+    eapListen,	/* Client ready (and timer running) */
+    eapIdentify,	/* EAP Identify sent */
+    eapSRP1,	/* Sent EAP SRP-SHA1 Subtype 1 */
+    eapSRP2,	/* Sent EAP SRP-SHA1 Subtype 2 */
+    eapSRP3,	/* Sent EAP SRP-SHA1 Subtype 3 */
+    eapMD5Chall,	/* Sent MD5-Challenge */
+    eapOpen,	/* Completed authentication */
+    eapSRP4,	/* Sent EAP SRP-SHA1 Subtype 4 */
+    eapBadAuth	/* Failed authentication */
 };
 
 struct eap_auth {
-	const char *ea_name;	/* Our name */
-	char ea_peer[MAXNAMELEN +1];	/* Peer's name */
-	void *ea_session;	/* Authentication library linkage */
-	u_char *ea_skey;	/* Shared encryption key */
-	u_short ea_namelen;	/* Length of our name */
-	u_short ea_peerlen;	/* Length of peer's name */
-	enum eap_state_code ea_state;
-	u_char ea_id;		/* Current id */
-	u_char ea_requests;	/* Number of Requests sent/received */
-	u_char ea_responses;	/* Number of Responses */
-	u_char ea_type;		/* One of EAPT_* */
-	u32_t ea_keyflags;	/* SRP shared key usage flags */
+    const char* ea_name;	/* Our name */
+    char ea_peer[MAXNAMELEN + 1];	/* Peer's name */
+    void* ea_session;	/* Authentication library linkage */
+    u_char* ea_skey;	/* Shared encryption key */
+    u_short ea_namelen;	/* Length of our name */
+    u_short ea_peerlen;	/* Length of peer's name */
+    enum eap_state_code ea_state;
+    u_char ea_id;		/* Current id */
+    u_char ea_requests;	/* Number of Requests sent/received */
+    u_char ea_responses;	/* Number of Responses */
+    u_char ea_type;		/* One of EAPT_* */
+    u32_t ea_keyflags;	/* SRP shared key usage flags */
 };
 
 #ifndef EAP_MAX_CHALLENGE_LENGTH
 #define EAP_MAX_CHALLENGE_LENGTH	24
 #endif
 typedef struct eap_state {
-	struct eap_auth es_client;	/* Client (authenticatee) data */
+    struct eap_auth es_client;	/* Client (authenticatee) data */
 #if PPP_SERVER
-	struct eap_auth es_server;	/* Server (authenticator) data */
+    struct eap_auth es_server;	/* Server (authenticator) data */
 #endif /* PPP_SERVER */
-	int es_savedtime;		/* Saved timeout */
-	int es_rechallenge;		/* EAP rechallenge interval */
-	int es_lwrechallenge;		/* SRP lightweight rechallenge inter */
-	u8_t es_usepseudo;		/* Use SRP Pseudonym if offered one */
-	int es_usedpseudo;		/* Set if we already sent PN */
-	int es_challen;			/* Length of challenge string */
-	u_char es_challenge[EAP_MAX_CHALLENGE_LENGTH];
+    int es_savedtime;		/* Saved timeout */
+    int es_rechallenge;		/* EAP rechallenge interval */
+    int es_lwrechallenge;		/* SRP lightweight rechallenge inter */
+    u8_t es_usepseudo;		/* Use SRP Pseudonym if offered one */
+    int es_usedpseudo;		/* Set if we already sent PN */
+    int es_challen;			/* Length of challenge string */
+    u_char es_challenge[EAP_MAX_CHALLENGE_LENGTH];
 } eap_state;
 
 /*
@@ -155,8 +138,8 @@ typedef struct eap_state {
 #define	EAP_DEFALLOWREQ		20	/* max # times to accept requests */
 #endif /* moved to ppp_opts.h */
 
-void eap_authwithpeer(ppp_pcb *pcb, const char *localname);
-void eap_authpeer(ppp_pcb *pcb, const char *localname);
+void eap_authwithpeer(ppp_pcb* pcb, const char* localname);
+void eap_authpeer(ppp_pcb* pcb, const char* localname);
 
 extern const struct protent eap_protent;
 

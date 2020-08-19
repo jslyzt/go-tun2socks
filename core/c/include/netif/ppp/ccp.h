@@ -1,33 +1,6 @@
 /*
  * ccp.h - Definitions for PPP Compression Control Protocol.
  *
- * Copyright (c) 1994-2002 Paul Mackerras. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. The name(s) of the authors of this software must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission.
- *
- * 3. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by Paul Mackerras
- *     <paulus@samba.org>".
- *
- * THE AUTHORS OF THIS SOFTWARE DISCLAIM ALL WARRANTIES WITH REGARD TO
- * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS, IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY
- * SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
- * AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
- * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- *
- * $Id: ccp.h,v 1.12 2004/11/04 10:02:26 paulus Exp $
  */
 
 #include "netif/ppp/ppp_opts.h"
@@ -128,16 +101,16 @@ extern "C" {
 
 typedef struct ccp_options {
 #if DEFLATE_SUPPORT
-    unsigned int deflate          :1; /* do Deflate? */
-    unsigned int deflate_correct  :1; /* use correct code for deflate? */
-    unsigned int deflate_draft    :1; /* use draft RFC code for deflate? */
+    unsigned int deflate          : 1; /* do Deflate? */
+    unsigned int deflate_correct  : 1; /* use correct code for deflate? */
+    unsigned int deflate_draft    : 1; /* use draft RFC code for deflate? */
 #endif /* DEFLATE_SUPPORT */
 #if BSDCOMPRESS_SUPPORT
-    unsigned int bsd_compress     :1; /* do BSD Compress? */
+    unsigned int bsd_compress     : 1; /* do BSD Compress? */
 #endif /* BSDCOMPRESS_SUPPORT */
 #if PREDICTOR_SUPPORT
-    unsigned int predictor_1      :1; /* do Predictor-1? */
-    unsigned int predictor_2      :1; /* do Predictor-2? */
+    unsigned int predictor_1      : 1; /* do Predictor-1? */
+    unsigned int predictor_2      : 1; /* do Predictor-2? */
 #endif /* PREDICTOR_SUPPORT */
 
 #if MPPE_SUPPORT
@@ -154,7 +127,7 @@ typedef struct ccp_options {
 
 extern const struct protent ccp_protent;
 
-void ccp_resetrequest(ppp_pcb *pcb);  /* Issue a reset-request. */
+void ccp_resetrequest(ppp_pcb* pcb);  /* Issue a reset-request. */
 
 #ifdef __cplusplus
 }

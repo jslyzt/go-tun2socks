@@ -3,37 +3,6 @@
  * SNMP support API for implementing netifs and statitics for MIB2
  */
 
-/*
- * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
- *
- * This file is part of the lwIP TCP/IP stack.
- *
- * Author: Dirk Ziegelmeier <dziegel@gmx.de>
- *
- */
 #ifndef LWIP_HDR_SNMP_H
 #define LWIP_HDR_SNMP_H
 
@@ -59,38 +28,38 @@ struct netif;
  * @see RFC1213, "MIB-II, 6. Definitions"
  */
 enum snmp_ifType {
-  snmp_ifType_other=1,                /* none of the following */
-  snmp_ifType_regular1822,
-  snmp_ifType_hdh1822,
-  snmp_ifType_ddn_x25,
-  snmp_ifType_rfc877_x25,
-  snmp_ifType_ethernet_csmacd,
-  snmp_ifType_iso88023_csmacd,
-  snmp_ifType_iso88024_tokenBus,
-  snmp_ifType_iso88025_tokenRing,
-  snmp_ifType_iso88026_man,
-  snmp_ifType_starLan,
-  snmp_ifType_proteon_10Mbit,
-  snmp_ifType_proteon_80Mbit,
-  snmp_ifType_hyperchannel,
-  snmp_ifType_fddi,
-  snmp_ifType_lapb,
-  snmp_ifType_sdlc,
-  snmp_ifType_ds1,                    /* T-1 */
-  snmp_ifType_e1,                     /* european equiv. of T-1 */
-  snmp_ifType_basicISDN,
-  snmp_ifType_primaryISDN,            /* proprietary serial */
-  snmp_ifType_propPointToPointSerial,
-  snmp_ifType_ppp,
-  snmp_ifType_softwareLoopback,
-  snmp_ifType_eon,                    /* CLNP over IP [11] */
-  snmp_ifType_ethernet_3Mbit,
-  snmp_ifType_nsip,                   /* XNS over IP */
-  snmp_ifType_slip,                   /* generic SLIP */
-  snmp_ifType_ultra,                  /* ULTRA technologies */
-  snmp_ifType_ds3,                    /* T-3 */
-  snmp_ifType_sip,                    /* SMDS */
-  snmp_ifType_frame_relay
+    snmp_ifType_other = 1,              /* none of the following */
+    snmp_ifType_regular1822,
+    snmp_ifType_hdh1822,
+    snmp_ifType_ddn_x25,
+    snmp_ifType_rfc877_x25,
+    snmp_ifType_ethernet_csmacd,
+    snmp_ifType_iso88023_csmacd,
+    snmp_ifType_iso88024_tokenBus,
+    snmp_ifType_iso88025_tokenRing,
+    snmp_ifType_iso88026_man,
+    snmp_ifType_starLan,
+    snmp_ifType_proteon_10Mbit,
+    snmp_ifType_proteon_80Mbit,
+    snmp_ifType_hyperchannel,
+    snmp_ifType_fddi,
+    snmp_ifType_lapb,
+    snmp_ifType_sdlc,
+    snmp_ifType_ds1,                    /* T-1 */
+    snmp_ifType_e1,                     /* european equiv. of T-1 */
+    snmp_ifType_basicISDN,
+    snmp_ifType_primaryISDN,            /* proprietary serial */
+    snmp_ifType_propPointToPointSerial,
+    snmp_ifType_ppp,
+    snmp_ifType_softwareLoopback,
+    snmp_ifType_eon,                    /* CLNP over IP [11] */
+    snmp_ifType_ethernet_3Mbit,
+    snmp_ifType_nsip,                   /* XNS over IP */
+    snmp_ifType_slip,                   /* generic SLIP */
+    snmp_ifType_ultra,                  /* ULTRA technologies */
+    snmp_ifType_ds3,                    /* T-3 */
+    snmp_ifType_sip,                    /* SMDS */
+    snmp_ifType_frame_relay
 };
 
 /** This macro has a precision of ~49 days because sys_now returns u32_t. \#define your own if you want ~490 days. */
@@ -102,7 +71,7 @@ enum snmp_ifType {
  * @ingroup netif_mib2
  * Increment stats member for SNMP MIB2 stats (struct stats_mib2_netif_ctrs)
  */
-#define MIB2_STATS_NETIF_INC(n, x)      do { ++(n)->mib2_counters.x; } while(0)
+#define MIB2_STATS_NETIF_INC(n, x) do { ++(n)->mib2_counters.x; } while(0)
 /**
  * @ingroup netif_mib2
  * Add value to stats member for SNMP MIB2 stats (struct stats_mib2_netif_ctrs)
@@ -143,13 +112,13 @@ enum snmp_ifType {
 /* LWIP MIB2 callbacks */
 #if LWIP_MIB2_CALLBACKS /* don't build if not configured for use in lwipopts.h */
 /* network interface */
-void mib2_netif_added(struct netif *ni);
-void mib2_netif_removed(struct netif *ni);
+void mib2_netif_added(struct netif* ni);
+void mib2_netif_removed(struct netif* ni);
 
 #if LWIP_IPV4 && LWIP_ARP
 /* ARP (for atTable and ipNetToMediaTable) */
-void mib2_add_arp_entry(struct netif *ni, ip4_addr_t *ip);
-void mib2_remove_arp_entry(struct netif *ni, ip4_addr_t *ip);
+void mib2_add_arp_entry(struct netif* ni, ip4_addr_t* ip);
+void mib2_remove_arp_entry(struct netif* ni, ip4_addr_t* ip);
 #else /* LWIP_IPV4 && LWIP_ARP */
 #define mib2_add_arp_entry(ni,ip)
 #define mib2_remove_arp_entry(ni,ip)
@@ -157,16 +126,16 @@ void mib2_remove_arp_entry(struct netif *ni, ip4_addr_t *ip);
 
 /* IP */
 #if LWIP_IPV4
-void mib2_add_ip4(struct netif *ni);
-void mib2_remove_ip4(struct netif *ni);
-void mib2_add_route_ip4(u8_t dflt, struct netif *ni);
-void mib2_remove_route_ip4(u8_t dflt, struct netif *ni);
+void mib2_add_ip4(struct netif* ni);
+void mib2_remove_ip4(struct netif* ni);
+void mib2_add_route_ip4(u8_t dflt, struct netif* ni);
+void mib2_remove_route_ip4(u8_t dflt, struct netif* ni);
 #endif /* LWIP_IPV4 */
 
 /* UDP */
 #if LWIP_UDP
-void mib2_udp_bind(struct udp_pcb *pcb);
-void mib2_udp_unbind(struct udp_pcb *pcb);
+void mib2_udp_bind(struct udp_pcb* pcb);
+void mib2_udp_unbind(struct udp_pcb* pcb);
 #endif /* LWIP_UDP */
 
 #else /* LWIP_MIB2_CALLBACKS */

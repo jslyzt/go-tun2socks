@@ -3,37 +3,6 @@
  * IPv4 protocol definitions
  */
 
-/*
- * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
- *
- * This file is part of the lwIP TCP/IP stack.
- *
- * Author: Adam Dunkels <adam@sics.se>
- *
- */
 #ifndef LWIP_HDR_PROT_IP4_H
 #define LWIP_HDR_PROT_IP4_H
 
@@ -51,7 +20,7 @@ extern "C" {
 #endif
 PACK_STRUCT_BEGIN
 struct ip4_addr_packed {
-  PACK_STRUCT_FIELD(u32_t addr);
+    PACK_STRUCT_FIELD(u32_t addr);
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
 #ifdef PACK_STRUCT_USE_INCLUDES
@@ -71,29 +40,29 @@ typedef struct ip4_addr_packed ip4_addr_p_t;
 PACK_STRUCT_BEGIN
 /* The IPv4 header */
 struct ip_hdr {
-  /* version / header length */
-  PACK_STRUCT_FLD_8(u8_t _v_hl);
-  /* type of service */
-  PACK_STRUCT_FLD_8(u8_t _tos);
-  /* total length */
-  PACK_STRUCT_FIELD(u16_t _len);
-  /* identification */
-  PACK_STRUCT_FIELD(u16_t _id);
-  /* fragment offset field */
-  PACK_STRUCT_FIELD(u16_t _offset);
+    /* version / header length */
+    PACK_STRUCT_FLD_8(u8_t _v_hl);
+    /* type of service */
+    PACK_STRUCT_FLD_8(u8_t _tos);
+    /* total length */
+    PACK_STRUCT_FIELD(u16_t _len);
+    /* identification */
+    PACK_STRUCT_FIELD(u16_t _id);
+    /* fragment offset field */
+    PACK_STRUCT_FIELD(u16_t _offset);
 #define IP_RF 0x8000U        /* reserved fragment flag */
 #define IP_DF 0x4000U        /* don't fragment flag */
 #define IP_MF 0x2000U        /* more fragments flag */
 #define IP_OFFMASK 0x1fffU   /* mask for fragmenting bits */
-  /* time to live */
-  PACK_STRUCT_FLD_8(u8_t _ttl);
-  /* protocol*/
-  PACK_STRUCT_FLD_8(u8_t _proto);
-  /* checksum */
-  PACK_STRUCT_FIELD(u16_t _chksum);
-  /* source and destination IP addresses */
-  PACK_STRUCT_FLD_S(ip4_addr_p_t src);
-  PACK_STRUCT_FLD_S(ip4_addr_p_t dest);
+    /* time to live */
+    PACK_STRUCT_FLD_8(u8_t _ttl);
+    /* protocol*/
+    PACK_STRUCT_FLD_8(u8_t _proto);
+    /* checksum */
+    PACK_STRUCT_FIELD(u16_t _chksum);
+    /* source and destination IP addresses */
+    PACK_STRUCT_FLD_S(ip4_addr_p_t src);
+    PACK_STRUCT_FLD_S(ip4_addr_p_t dest);
 } PACK_STRUCT_STRUCT;
 PACK_STRUCT_END
 #ifdef PACK_STRUCT_USE_INCLUDES

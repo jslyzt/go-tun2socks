@@ -1,45 +1,6 @@
 /*
  * fsm.h - {Link, IP} Control Protocol Finite State Machine definitions.
  *
- * Copyright (c) 1984-2000 Carnegie Mellon University. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The name "Carnegie Mellon University" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For permission or any legal
- *    details, please contact
- *      Office of Technology Transfer
- *      Carnegie Mellon University
- *      5000 Forbes Avenue
- *      Pittsburgh, PA  15213-3890
- *      (412) 268-4387, fax: (412) 268-7395
- *      tech-transfer@andrew.cmu.edu
- *
- * 4. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by Computing Services
- *     at Carnegie Mellon University (http://www.cmu.edu/computing/)."
- *
- * CARNEGIE MELLON UNIVERSITY DISCLAIMS ALL WARRANTIES WITH REGARD TO
- * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS, IN NO EVENT SHALL CARNEGIE MELLON UNIVERSITY BE LIABLE
- * FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
- * AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING
- * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- *
- * $Id: fsm.h,v 1.10 2004/11/13 02:28:15 paulus Exp $
  */
 
 #include "netif/ppp/ppp_opts.h"
@@ -76,11 +37,11 @@ extern "C" {
  * Each FSM is described by an fsm structure and fsm callbacks.
  */
 typedef struct fsm {
-    ppp_pcb *pcb;		/* PPP Interface */
-    const struct fsm_callbacks *callbacks;	/* Callback routines */
-    const char *term_reason;	/* Reason for closing protocol */
+    ppp_pcb* pcb;		/* PPP Interface */
+    const struct fsm_callbacks* callbacks;	/* Callback routines */
+    const char* term_reason;	/* Reason for closing protocol */
     u8_t seen_ack;		/* Have received valid Ack/Nak/Rej to Req */
-				  /* -- This is our only flag, we might use u_int :1 if we have more flags */
+    /* -- This is our only flag, we might use u_int :1 if we have more flags */
     u16_t protocol;		/* Data Link Layer Protocol field value */
     u8_t state;			/* State */
     u8_t flags;			/* Contains option bits */
@@ -97,34 +58,34 @@ typedef struct fsm {
 
 typedef struct fsm_callbacks {
     void (*resetci)		/* Reset our Configuration Information */
-		(fsm *);
-    int  (*cilen)		/* Length of our Configuration Information */
-		(fsm *);
+    (fsm*);
+    int (*cilen)		/* Length of our Configuration Information */
+    (fsm*);
     void (*addci) 		/* Add our Configuration Information */
-		(fsm *, u_char *, int *);
-    int  (*ackci)		/* ACK our Configuration Information */
-		(fsm *, u_char *, int);
-    int  (*nakci)		/* NAK our Configuration Information */
-		(fsm *, u_char *, int, int);
-    int  (*rejci)		/* Reject our Configuration Information */
-		(fsm *, u_char *, int);
-    int  (*reqci)		/* Request peer's Configuration Information */
-		(fsm *, u_char *, int *, int);
+    (fsm*, u_char*, int*);
+    int (*ackci)		/* ACK our Configuration Information */
+    (fsm*, u_char*, int);
+    int (*nakci)		/* NAK our Configuration Information */
+    (fsm*, u_char*, int, int);
+    int (*rejci)		/* Reject our Configuration Information */
+    (fsm*, u_char*, int);
+    int (*reqci)		/* Request peer's Configuration Information */
+    (fsm*, u_char*, int*, int);
     void (*up)			/* Called when fsm reaches PPP_FSM_OPENED state */
-		(fsm *);
+    (fsm*);
     void (*down)		/* Called when fsm leaves PPP_FSM_OPENED state */
-		(fsm *);
+    (fsm*);
     void (*starting)		/* Called when we want the lower layer */
-		(fsm *);
+    (fsm*);
     void (*finished)		/* Called when we don't want the lower layer */
-		(fsm *);
+    (fsm*);
     void (*protreject)		/* Called when Protocol-Reject received */
-		(int);
+    (int);
     void (*retransmit)		/* Retransmission is necessary */
-		(fsm *);
-    int  (*extcode)		/* Called when unknown code received */
-		(fsm *, int, int, u_char *, int);
-    const char *proto_name;	/* String name for protocol (for messages) */
+    (fsm*);
+    int (*extcode)		/* Called when unknown code received */
+    (fsm*, int, int, u_char*, int);
+    const char* proto_name;	/* String name for protocol (for messages) */
 } fsm_callbacks;
 
 
@@ -165,14 +126,14 @@ typedef struct fsm_callbacks {
 /*
  * Prototypes
  */
-void fsm_init(fsm *f);
-void fsm_lowerup(fsm *f);
-void fsm_lowerdown(fsm *f);
-void fsm_open(fsm *f);
-void fsm_close(fsm *f, const char *reason);
-void fsm_input(fsm *f, u_char *inpacket, int l);
-void fsm_protreject(fsm *f);
-void fsm_sdata(fsm *f, u_char code, u_char id, const u_char *data, int datalen);
+void fsm_init(fsm* f);
+void fsm_lowerup(fsm* f);
+void fsm_lowerdown(fsm* f);
+void fsm_open(fsm* f);
+void fsm_close(fsm* f, const char* reason);
+void fsm_input(fsm* f, u_char* inpacket, int l);
+void fsm_protreject(fsm* f);
+void fsm_sdata(fsm* f, u_char code, u_char id, const u_char* data, int datalen);
 
 #ifdef __cplusplus
 }

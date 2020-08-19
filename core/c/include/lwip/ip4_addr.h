@@ -3,37 +3,6 @@
  * IPv4 address API
  */
 
-/*
- * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
- *
- * This file is part of the lwIP TCP/IP stack.
- *
- * Author: Adam Dunkels <adam@sics.se>
- *
- */
 #ifndef LWIP_HDR_IP4_ADDR_H
 #define LWIP_HDR_IP4_ADDR_H
 
@@ -49,7 +18,7 @@ extern "C" {
 /** This is the aligned version of ip4_addr_t,
    used as local variable, on the stack, etc. */
 struct ip4_addr {
-  u32_t addr;
+    u32_t addr;
 };
 
 /** ip4_addr_t uses a struct for convenience only, so that the same defines can
@@ -148,7 +117,7 @@ struct netif;
 #define ip4_addr_isany(addr1) ((addr1) == NULL || ip4_addr_isany_val(*(addr1)))
 
 #define ip4_addr_isbroadcast(addr1, netif) ip4_addr_isbroadcast_u32((addr1)->addr, netif)
-u8_t ip4_addr_isbroadcast_u32(u32_t addr, const struct netif *netif);
+u8_t ip4_addr_isbroadcast_u32(u32_t addr, const struct netif* netif);
 
 #define ip_addr_netmask_valid(netmask) ip4_addr_netmask_valid((netmask)->addr)
 u8_t ip4_addr_netmask_valid(u32_t netmask);
@@ -201,11 +170,11 @@ u8_t ip4_addr_netmask_valid(u32_t netmask);
 /** For backwards compatibility */
 #define ip_ntoa(ipaddr)  ipaddr_ntoa(ipaddr)
 
-u32_t ipaddr_addr(const char *cp);
-int ip4addr_aton(const char *cp, ip4_addr_t *addr);
+u32_t ipaddr_addr(const char* cp);
+int ip4addr_aton(const char* cp, ip4_addr_t* addr);
 /** returns ptr to static buffer; not reentrant! */
-char *ip4addr_ntoa(const ip4_addr_t *addr);
-char *ip4addr_ntoa_r(const ip4_addr_t *addr, char *buf, int buflen);
+char* ip4addr_ntoa(const ip4_addr_t* addr);
+char* ip4addr_ntoa_r(const ip4_addr_t* addr, char* buf, int buflen);
 
 #ifdef __cplusplus
 }

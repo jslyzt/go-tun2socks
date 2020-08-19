@@ -3,37 +3,6 @@
  * SNMP server options list
  */
 
-/*
- * Copyright (c) 2015 Dirk Ziegelmeier
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
- *
- * This file is part of the lwIP TCP/IP stack.
- *
- * Author: Dirk Ziegelmeier
- *
- */
 #ifndef LWIP_HDR_SNMP_OPTS_H
 #define LWIP_HDR_SNMP_OPTS_H
 
@@ -135,11 +104,11 @@
 /**
  * The minimum size of a value.
  */
-#define SNMP_MIN_VALUE_SIZE             (2 * sizeof(u32_t*)) /* size required to store the basic types (8 bytes for counter64) */
+#define SNMP_MIN_VALUE_SIZE (2 * sizeof(u32_t*)) /* size required to store the basic types (8 bytes for counter64) */
 /**
  * The maximum size of a value.
  */
-#define SNMP_MAX_VALUE_SIZE             LWIP_MAX(LWIP_MAX((SNMP_MAX_OCTET_STRING_LEN), sizeof(u32_t)*(SNMP_MAX_OBJ_ID_LEN)), SNMP_MIN_VALUE_SIZE)
+#define SNMP_MAX_VALUE_SIZE LWIP_MAX(LWIP_MAX((SNMP_MAX_OCTET_STRING_LEN), sizeof(u32_t)*(SNMP_MAX_OBJ_ID_LEN)), SNMP_MIN_VALUE_SIZE)
 #endif
 
 /**
@@ -147,7 +116,7 @@
  * unless SNMP_COMMUNITY_WRITE or SNMP_COMMUNITY_TRAP are enabled, respectively.
  */
 #if !defined SNMP_COMMUNITY || defined __DOXYGEN__
-#define SNMP_COMMUNITY                  "public"
+#define SNMP_COMMUNITY  "public"
 #endif
 
 /**
@@ -155,14 +124,14 @@
  * Set this community to "" in order to disallow any write access.
  */
 #if !defined SNMP_COMMUNITY_WRITE || defined __DOXYGEN__
-#define SNMP_COMMUNITY_WRITE            "private"
+#define SNMP_COMMUNITY_WRITE    "private"
 #endif
 
 /**
  * The snmp community used for sending traps.
  */
 #if !defined SNMP_COMMUNITY_TRAP || defined __DOXYGEN__
-#define SNMP_COMMUNITY_TRAP             "public"
+#define SNMP_COMMUNITY_TRAP "public"
 #endif
 
 /**
@@ -203,28 +172,28 @@
  * SNMP_DEBUG: Enable debugging for SNMP messages.
  */
 #if !defined SNMP_DEBUG || defined __DOXYGEN__
-#define SNMP_DEBUG                      LWIP_DBG_OFF
+#define SNMP_DEBUG  LWIP_DBG_OFF
 #endif
 
 /**
  * SNMP_MIB_DEBUG: Enable debugging for SNMP MIBs.
  */
 #if !defined SNMP_MIB_DEBUG || defined __DOXYGEN__
-#define SNMP_MIB_DEBUG                  LWIP_DBG_OFF
+#define SNMP_MIB_DEBUG  LWIP_DBG_OFF
 #endif
 
 /**
  * Indicates if the MIB2 implementation of LWIP SNMP stack is used.
  */
 #if !defined SNMP_LWIP_MIB2 || defined __DOXYGEN__
-#define SNMP_LWIP_MIB2                      LWIP_SNMP
+#define SNMP_LWIP_MIB2  LWIP_SNMP
 #endif
 
 /**
  * Value return for sysDesc field of MIB2.
  */
 #if !defined SNMP_LWIP_MIB2_SYSDESC || defined __DOXYGEN__
-#define SNMP_LWIP_MIB2_SYSDESC              "lwIP"
+#define SNMP_LWIP_MIB2_SYSDESC  "lwIP"
 #endif
 
 /**
@@ -232,7 +201,7 @@
  * To make sysName field settable, call snmp_mib2_set_sysname() to provide the necessary buffers.
  */
 #if !defined SNMP_LWIP_MIB2_SYSNAME || defined __DOXYGEN__
-#define SNMP_LWIP_MIB2_SYSNAME              "FQDN-unk"
+#define SNMP_LWIP_MIB2_SYSNAME  "FQDN-unk"
 #endif
 
 /**
@@ -240,7 +209,7 @@
  * To make sysContact field settable, call snmp_mib2_set_syscontact() to provide the necessary buffers.
  */
 #if !defined SNMP_LWIP_MIB2_SYSCONTACT || defined __DOXYGEN__
-#define SNMP_LWIP_MIB2_SYSCONTACT           ""
+#define SNMP_LWIP_MIB2_SYSCONTACT   ""
 #endif
 
 /**
@@ -248,7 +217,7 @@
  * To make sysLocation field settable, call snmp_mib2_set_syslocation() to provide the necessary buffers.
  */
 #if !defined SNMP_LWIP_MIB2_SYSLOCATION || defined __DOXYGEN__
-#define SNMP_LWIP_MIB2_SYSLOCATION          ""
+#define SNMP_LWIP_MIB2_SYSLOCATION  ""
 #endif
 
 /**
@@ -283,11 +252,11 @@
 #endif
 
 #ifndef LWIP_SNMP_V3_MBEDTLS
-#define LWIP_SNMP_V3_MBEDTLS       LWIP_SNMP_V3
+#define LWIP_SNMP_V3_MBEDTLS    LWIP_SNMP_V3
 #endif
 
 #ifndef LWIP_SNMP_V3_CRYPTO
-#define LWIP_SNMP_V3_CRYPTO        LWIP_SNMP_V3_MBEDTLS
+#define LWIP_SNMP_V3_CRYPTO LWIP_SNMP_V3_MBEDTLS
 #endif
 
 #ifndef LWIP_SNMP_CONFIGURE_VERSIONS

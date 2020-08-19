@@ -6,36 +6,31 @@ package core
 
 extern err_t tcpAcceptFn(void *arg, struct tcp_pcb *newpcb, err_t err);
 
-void
-set_tcp_accept_callback(struct tcp_pcb *pcb) {
+void set_tcp_accept_callback(struct tcp_pcb *pcb) {
 	tcp_accept(pcb, tcpAcceptFn);
 }
 
 extern err_t tcpRecvFn(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err);
 
-void
-set_tcp_recv_callback(struct tcp_pcb *pcb) {
+void set_tcp_recv_callback(struct tcp_pcb *pcb) {
 	tcp_recv(pcb, tcpRecvFn);
 }
 
 extern err_t tcpSentFn(void *arg, struct tcp_pcb *tpcb, u16_t len);
 
-void
-set_tcp_sent_callback(struct tcp_pcb *pcb) {
+void set_tcp_sent_callback(struct tcp_pcb *pcb) {
     tcp_sent(pcb, tcpSentFn);
 }
 
 extern void tcpErrFn(void *arg, err_t err);
 
-void
-set_tcp_err_callback(struct tcp_pcb *pcb) {
+void set_tcp_err_callback(struct tcp_pcb *pcb) {
 	tcp_err(pcb, tcpErrFn);
 }
 
 extern err_t tcpPollFn(void *arg, struct tcp_pcb *tpcb);
 
-void
-set_tcp_poll_callback(struct tcp_pcb *pcb, u8_t interval) {
+void set_tcp_poll_callback(struct tcp_pcb *pcb, u8_t interval) {
 	tcp_poll(pcb, tcpPollFn, interval);
 }
 */

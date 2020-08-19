@@ -3,37 +3,6 @@
  * IP address API (common IPv4 and IPv6)
  */
 
-/*
- * Copyright (c) 2001-2004 Swedish Institute of Computer Science.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. The name of the author may not be used to endorse or promote products
- *    derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
- * OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
- * OF SUCH DAMAGE.
- *
- * This file is part of the lwIP TCP/IP stack.
- *
- * Author: Adam Dunkels <adam@sics.se>
- *
- */
 #ifndef LWIP_HDR_IP_ADDR_H
 #define LWIP_HDR_IP_ADDR_H
 
@@ -52,12 +21,12 @@ extern "C" {
  * @see tcp_new_ip_type(), udp_new_ip_type(), raw_new_ip_type().
  */
 enum lwip_ip_addr_type {
-  /** IPv4 */
-  IPADDR_TYPE_V4 =   0U,
-  /** IPv6 */
-  IPADDR_TYPE_V6 =   6U,
-  /** IPv4+IPv6 ("dual-stack") */
-  IPADDR_TYPE_ANY = 46U
+    /** IPv4 */
+    IPADDR_TYPE_V4 =   0U,
+    /** IPv6 */
+    IPADDR_TYPE_V6 =   6U,
+    /** IPv4+IPv6 ("dual-stack") */
+    IPADDR_TYPE_ANY = 46U
 };
 
 #if LWIP_IPV4 && LWIP_IPV6
@@ -67,12 +36,12 @@ enum lwip_ip_addr_type {
  * ATTENTION: watch out for its size when adding IPv6 address scope!
  */
 typedef struct ip_addr {
-  union {
-    ip6_addr_t ip6;
-    ip4_addr_t ip4;
-  } u_addr;
-  /** @ref lwip_ip_addr_type */
-  u8_t type;
+    union {
+        ip6_addr_t ip6;
+        ip4_addr_t ip4;
+    } u_addr;
+    /** @ref lwip_ip_addr_type */
+    u8_t type;
 } ip_addr_t;
 
 extern const ip_addr_t ip_addr_any_type;
@@ -236,9 +205,9 @@ extern const ip_addr_t ip_addr_any_type;
 #define ip_addr_debug_print_val(debug, ipaddr) do { if(IP_IS_V6_VAL(ipaddr)) { \
   ip6_addr_debug_print_val(debug, *ip_2_ip6(&(ipaddr))); } else { \
   ip4_addr_debug_print_val(debug, *ip_2_ip4(&(ipaddr))); }}while(0)
-char *ipaddr_ntoa(const ip_addr_t *addr);
-char *ipaddr_ntoa_r(const ip_addr_t *addr, char *buf, int buflen);
-int ipaddr_aton(const char *cp, ip_addr_t *addr);
+char* ipaddr_ntoa(const ip_addr_t* addr);
+char* ipaddr_ntoa_r(const ip_addr_t* addr, char* buf, int buflen);
+int ipaddr_aton(const char* cp, ip_addr_t* addr);
 
 /** @ingroup ipaddr */
 #define IPADDR_STRLEN_MAX   IP6ADDR_STRLEN_MAX
@@ -404,7 +373,7 @@ extern const ip_addr_t ip_addr_broadcast;
 
 extern const ip_addr_t ip6_addr_any;
 
-/** 
+/**
  * @ingroup ip6addr
  * IP6_ADDR_ANY can be used as a fixed ip_addr_t
  * for the IPv6 wildcard address
