@@ -35,19 +35,6 @@ var (
 	postFlagsInitFn = make([]func(), 0)
 	args            = new(CmdArgs)
 	lwipWriter      io.Writer
-
-	flagCreaters = map[cmdFlag]func(){
-		fProxyServer: func() {
-			if args.ProxyServer == nil {
-				args.ProxyServer = flag.String("proxyServer", "1.2.3.4:1087", "Proxy server address")
-			}
-		},
-		fUDPTimeout: func() {
-			if args.UDPTimeout == nil {
-				args.UDPTimeout = flag.Duration("udpTimeout", 1*time.Minute, "UDP session timeout")
-			}
-		},
-	}
 )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,14 +70,6 @@ func addPostFlagsInitFn(fn func()) {
 	postFlagsInitFn = append(postFlagsInitFn, fn)
 }
 
-func (a *CmdArgs) addFlag(f cmdFlag) {
-	if fn, found := flagCreaters[f]; found && fn != nil {
-		fn()
-	} else {
-		log.Fatalf("unsupported flag")
-	}
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func main() {
@@ -104,6 +83,8 @@ func main() {
 	args.BlockOutsideDNS = flag.Bool("blockOutsideDns", false, "Prevent DNS leaks by blocking plaintext DNS queries going out through non-TUN interface (may require admin privileges) (Windows only) ")
 	args.ProxyType = flag.String("proxyType", "socks", "Proxy handler type")
 	args.LogLevel = flag.String("loglevel", "info", "Logging level. (debug, info, warn, error, none)")
+	args.ProxyServer = flag.String("proxyServer", "1.2.3.4:1087", "Proxy server address")
+	args.UDPTimeout = flag.Duration("udpTimeout", 1*time.Minute, "UDP session timeout")
 
 	flag.Parse()
 

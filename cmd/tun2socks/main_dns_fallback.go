@@ -1,5 +1,3 @@
-// +build dnsfallback
-
 package main
 
 import (
@@ -10,7 +8,7 @@ import (
 )
 
 func init() {
-	args.DnsFallback = flag.Bool("dnsFallback", false, "Enable DNS fallback over TCP (overrides the UDP proxy handler).")
+	args.DNSFallback = flag.Bool("dnsFallback", false, "Enable DNS fallback over TCP (overrides the UDP proxy handler).")
 
 	registerHandlerCreater("dnsfallback", func() {
 		core.RegisterUDPConnHandler(dnsfallback.NewUDPHandler())

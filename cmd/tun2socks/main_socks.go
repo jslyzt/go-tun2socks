@@ -1,5 +1,3 @@
-// +build socks
-
 package main
 
 import (
@@ -11,9 +9,6 @@ import (
 )
 
 func init() {
-	args.addFlag(fProxyServer)
-	args.addFlag(fUDPTimeout)
-
 	registerHandlerCreater("socks", func() {
 		// Verify proxy server address.
 		proxyAddr, err := net.ResolveTCPAddr("tcp", *args.ProxyServer)

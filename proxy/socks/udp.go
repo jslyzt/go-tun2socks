@@ -146,7 +146,7 @@ func (h *udpHandler) connectInternal(conn core.UDPConn, dest string) error {
 
 	go h.fetchUDPInput(conn, pc)
 
-	log.Infof("new proxy connection to %v", dest)
+	log.Infof("new udp proxy connection to %v", dest)
 
 	return nil
 }

@@ -99,7 +99,7 @@ func (h *tcpHandler) Handle(conn net.Conn, target *net.TCPAddr) error {
 
 	go h.relay(conn, c)
 
-	log.Infof("new proxy connection to %v", target)
+	log.Infof("new tcp proxy connection to %v", target)
 
 	return nil
 }
