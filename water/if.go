@@ -46,19 +46,15 @@ func defaultConfig() Config {
 	}
 }
 
-var zeroConfig Config
-
 // New creates a new TUN/TAP interface using config.
-func New(config Config) (ifce *Interface, err error) {
-	if zeroConfig == config {
-		config = defaultConfig()
+func New(cfg Config) (ifce *Interface, err error) {
+	if cfg.DeviceType == 0 {
+		cfg = defaultConfig()
+		cfg.PlatformSpecificParams = defaultPlatformSpecificParams()
 	}
-	if config.PlatformSpecificParams == zeroConfig.PlatformSpecificParams {
-		config.PlatformSpecificParams = defaultPlatformSpecificParams()
-	}
-	switch config.DeviceType {
+	switch cfg.DeviceType {
 	case TUN, TAP:
-		return openDev(config)
+		return openDev(cfg)
 	default:
 		return nil, errors.New("unknown device type")
 	}

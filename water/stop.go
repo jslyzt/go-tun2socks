@@ -1,4 +1,4 @@
-package tun
+package water
 
 import (
 	"bytes"
@@ -8,10 +8,9 @@ import (
 
 var stopMarker = []byte{2, 2, 2, 2, 2, 2, 2, 2}
 
-// Close of Windows and Linux tun/tap device do not interrupt blocking Read.
-// sendStopMarker is used to issue a specific packet to notify threads blocking
-// on Read.
-func sendStopMarker(src, dst string) {
+// SendStopMarker Close of Windows and Linux tun/tap device do not interrupt blocking Read.
+// sendStopMarker is used to issue a specific packet to notify threads blocking on Read.
+func SendStopMarker(src, dst string) {
 	l, _ := net.ResolveUDPAddr("udp", src+":2222")
 	r, _ := net.ResolveUDPAddr("udp", dst+":2222")
 	conn, err := net.DialUDP("udp", l, r)
@@ -23,7 +22,8 @@ func sendStopMarker(src, dst string) {
 	conn.Write(stopMarker)
 }
 
-func isStopMarker(pkt []byte, src, dst net.IP) bool {
+// IsStopMarker  是否关闭
+func IsStopMarker(pkt []byte, src, dst net.IP) bool {
 	n := len(pkt)
 	// at least should be 20(ip) + 8(udp) + 8(stopmarker)
 	if n < 20+8+8 {
