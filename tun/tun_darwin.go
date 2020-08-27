@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/songgao/water"
+	"go-tun2socks/water"
 )
 
 func isIPv4(ip net.IP) bool {
@@ -30,6 +30,7 @@ func isIPv6(ip net.IP) bool {
 	return false
 }
 
+// OpenTunDevice open tun
 func OpenTunDevice(name, addr, gw, mask string, dnsServers []string, persist bool) (io.ReadWriteCloser, error) {
 	tunDev, err := water.New(water.Config{
 		DeviceType: water.TUN,

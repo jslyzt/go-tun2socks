@@ -3,9 +3,10 @@ package tun
 import (
 	"io"
 
-	"github.com/songgao/water"
+	"go-tun2socks/water"
 )
 
+// OpenTunDevice open tun
 func OpenTunDevice(name, addr, gw, mask string, dnsServers []string, persist bool) (io.ReadWriteCloser, error) {
 	cfg := water.Config{
 		DeviceType: water.TUN,
