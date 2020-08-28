@@ -23,11 +23,6 @@ const (
 	MTU = 1500
 )
 
-const (
-	fProxyServer cmdFlag = iota
-	fUDPTimeout
-)
-
 // 变量定义
 var (
 	version         = "undefined"
@@ -40,8 +35,6 @@ var (
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type (
-	cmdFlag uint
-
 	// CmdArgs cmd参数
 	CmdArgs struct {
 		Version         *bool
