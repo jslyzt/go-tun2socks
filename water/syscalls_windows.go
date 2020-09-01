@@ -102,6 +102,7 @@ func newWinTapDev(fd windows.Handle, addr string, gw string) *winTapDev {
 		gw:     gw,
 		gwIP:   net.ParseIP(gw).To4(),
 	}
+	dev.ReadWriteCloser = dev
 	return dev
 }
 
@@ -226,34 +227,31 @@ func newOverlapped() (*syscall.Overlapped, error) {
 // setStatus is used to bring up or bring down the interface
 func setStatus(fd windows.Handle, status bool) error {
 	var bytesReturned uint32
-	rdbbuf := make([]byte, syscall.MAXIMUM_REPARSE_DATA_BUFFER_SIZE)
 	code := []byte{0x00, 0x00, 0x00, 0x00}
 	if status {
 		code[0] = 0x01
 	}
-	return windows.DeviceIoControl(fd, tapIoctlSetMediaStatus, &code[0], uint32(4), &rdbbuf[0], uint32(len(rdbbuf)), &bytesReturned, nil)
+	return windows.DeviceIoControl(fd, tapIoctlSetMediaStatus, &code[0], uint32(len(code)), &code[0], uint32(len(code)), &bytesReturned, nil)
 }
 
 // setTUN is used to configure the IP address in the underlying driver when using TUN
-func setTUN(fd windows.Handle, network string) error {
+func setTUN(fd windows.Handle, addr, mask string) error {
 	var bytesReturned uint32
-	rdbbuf := make([]byte, syscall.MAXIMUM_REPARSE_DATA_BUFFER_SIZE)
-
-	localIP, remoteNet, err := net.ParseCIDR(network)
-	if err != nil {
-		return fmt.Errorf("Failed to parse network CIDR in config, %v", err)
-	}
-	if localIP.To4() == nil {
-		return fmt.Errorf("Provided network(%s) is not a valid IPv4 address", network)
+	naddr, nmask := net.ParseIP(addr).To4(), net.ParseIP(mask).To4()
+	if naddr == nil || nmask == nil {
+		return fmt.Errorf("Provided addr(%s) mask(%s) is not a valid IPv4 address", addr, mask)
 	}
 	code2 := make([]byte, 0, 12)
-	code2 = append(code2, localIP.To4()[:4]...)
-	code2 = append(code2, remoteNet.IP.To4()[:4]...)
-	code2 = append(code2, remoteNet.Mask[:4]...)
+	code2 = append(code2, naddr[:4]...)
+	code2 = append(code2, naddr[:4]...)
+	code2 = append(code2, nmask...)
 	if len(code2) != 12 {
-		return fmt.Errorf("Provided network(%s) is not valid", network)
+		return fmt.Errorf("Provided addr(%s) mask(%s) is not valid", addr, mask)
 	}
-	if err := windows.DeviceIoControl(fd, tapIoctlConfigTun, &code2[0], uint32(12), &rdbbuf[0], uint32(len(rdbbuf)), &bytesReturned, nil); err != nil {
+	for i := 0; i < 4; i++ {
+		code2[i+4] &= code2[i+8]
+	}
+	if err := windows.DeviceIoControl(fd, tapIoctlConfigTun, &code2[0], uint32(12), &code2[0], uint32(len(code2)), &bytesReturned, nil); err != nil {
 		return err
 	}
 	return nil
@@ -459,7 +457,7 @@ func openDev(cfg Config) (*Interface, error) {
 
 	//TUN
 	if cfg.DeviceType == TUN {
-		if err = setTUN(fd, cfg.PlatformSpecificParams.Network); err != nil {
+		if err = setTUN(fd, cfg.Addr, cfg.Mask); err != nil {
 			windows.Close(fd)
 			return nil, err
 		}

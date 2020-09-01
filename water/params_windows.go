@@ -5,7 +5,6 @@ package water
 type PlatformSpecificParams struct {
 	ComponentID         string
 	InterfaceName       string
-	Network             string
 	Addr, GateWay, Mask string
 	DNS                 []string
 }
@@ -13,6 +12,5 @@ type PlatformSpecificParams struct {
 func defaultPlatformSpecificParams() PlatformSpecificParams {
 	return PlatformSpecificParams{
 		ComponentID: "tap0901",
-		Network:     "192.168.1.10/24",
 	}
 }

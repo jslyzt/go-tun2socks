@@ -25,11 +25,10 @@ const (
 
 // 变量定义
 var (
-	version         = "undefined"
-	handlerCreater  = make(map[string]func(), 0)
-	postFlagsInitFn = make([]func(), 0)
-	args            = new(CmdArgs)
-	lwipWriter      io.Writer
+	version        = "undefined"
+	handlerCreater = make(map[string]func(), 0)
+	args           = new(CmdArgs)
+	lwipWriter     io.Writer
 )
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,10 +58,6 @@ func registerHandlerCreater(name string, creater func()) {
 	handlerCreater[name] = creater
 }
 
-func addPostFlagsInitFn(fn func()) {
-	postFlagsInitFn = append(postFlagsInitFn, fn)
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 func main() {
@@ -86,13 +81,6 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Initialization ops after parsing flags.
-	for _, fn := range postFlagsInitFn {
-		if fn != nil {
-			fn()
-		}
-	}
-
 	// Set log level.
 	switch strings.ToLower(*args.LogLevel) {
 	case "debug":
@@ -112,13 +100,15 @@ func main() {
 	// Open the tun device.
 	dnsServers := strings.Split(*args.TunDNS, ",")
 	tunDev, err := tun.OpenTunDevice(*args.TunName, *args.TunAddr, *args.TunGw, *args.TunMask, dnsServers, *args.TunPersist)
-	if err != nil {
+	if err != nil || tunDev == nil {
 		log.Fatalf("failed to open tun device: %v", err)
+		return
 	}
 
 	if runtime.GOOS == "windows" && *args.BlockOutsideDNS {
 		if err := blocker.BlockOutsideDNS(*args.TunName); err != nil {
 			log.Fatalf("failed to block outside DNS: %v", err)
+			return
 		}
 	}
 

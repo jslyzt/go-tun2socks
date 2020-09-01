@@ -11,9 +11,9 @@ import (
 // interfaces to send/receive packet in parallel.
 // Kernel document about MultiQueue: https://www.kernel.org/doc/Documentation/networking/tuntap.txt
 type Interface struct {
-	isTAP bool
 	io.ReadWriteCloser
-	name string
+	isTAP bool
+	name  string
 }
 
 // DeviceType is the type for specifying device types.
