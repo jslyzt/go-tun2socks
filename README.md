@@ -1,22 +1,60 @@
 # go-tun2socks
 
-[![Build Status](https://travis-ci.com/eycorsican/go-tun2socks.svg?branch=master)](https://travis-ci.com/eycorsican/go-tun2socks)
+### 运行参数
 
-A tun2socks implementation written in Go.
+    Usage of ./tun2socks:
+        -blockOutsideDns
+                Prevent DNS leaks by blocking plaintext DNS queries going out through non-TUN interface (may require admin privileges) (Windows only) 
+        -dnsFallback
+                Enable DNS fallback over TCP (overrides the UDP proxy handler).
+        -loglevel string
+                Logging level. (debug, info, warn, error, none) (default "info")
+        -proxyServer string
+                Proxy server address (default "1.2.3.4:1087")
+        -proxyType string
+                Proxy handler type (default "socks")
+        -tunAddr string
+                TUN interface address (default "10.255.0.2")
+        -tunDns string
+                DNS resolvers for TUN interface (only need on Windows) (default "8.8.8.8,8.8.4.4")
+        -tunGw string
+                TUN interface gateway (default "10.255.0.1")
+        -tunMask string
+                TUN interface netmask, it should be a prefixlen (a number) for IPv6 address (default "255.255.255.0")
+        -tunName string
+                TUN interface name (default "tun1")
+        -tunPersist
+                Persist TUN interface after the program exits or the last open file descriptor is closed (Linux only)
+        -udpTimeout duration
+                UDP session timeout (default 1m0s)
+        -version
+                Print version
 
-To run the tun2socks command line program, depending on OS, you may need to run it as root, create the TUN interface and/or configure IP address of the interface manually. Moreover, you should add corresponding routes to the routing table manually. Mind that you often want to use some different system DNS resolvers, and your proxy server should support UDP.
+### 参数示例
 
-To use go-tun2socks as a library in your own project, refer to the following files/repos for some ideas:
+    -tunAddr 10.0.0.2 -tunGw 10.0.0.1 -proxyType socks -proxyServer 127.0.0.1:3000 -tunDns 8.8.8.8,4.4.4.4 -tunName vpn
+    
 
-- https://go-tun2socks/tree/master/cmd/tun2socks
-- https://go-tun2socks-mobile
-- https://github.com/Jigsaw-Code/outline-go-tun2socks
+### tun创建
 
-It's recommended to write your own SOCKS layer. For example, you can create a "tun2shadowsocks" program by implementing a Shadowsocks handler, see https://github.com/Jigsaw-Code/outline-go-tun2socks/tree/master/shadowsocks
+    linux:
+    sudo ip tuntap add vpn mode tun user jslyzt group jslyzt
+    sudo ip link set vpn up
+    sudo ip addr add 10.0.0.1/24 dev vpn
+    sudo ip a
 
-It's also recommended to write your own TUN layer to connect the TUN interface and go-tun2socks, see https://go-tun2socks/tree/master/tun for examples.
+    sudo ifconfig -a
+    sudo netstat -nr
 
-The following projects are using go-tun2socks:
+    sudo route add -net 10.0.0.1 netmask 255.255.225.0 10.0.0.2
+    sudo route del -net 10.0.0.1 netmask 255.255.255.0
 
-- https://github.com/mellow-io/mellow
-- https://github.com/eycorsican/kitsunebi-android
+    sudo route add -host 10.0.0.2 dev vpn
+    sudo route del -net 10.0.0.2 netmask 255.255.255.255
+
+
+    sudo ip route add to 192.168.1.18 dev ens33 src 192.168.1.16
+    sudo ip route delete default
+    sudo ip route add default via "虚拟IP例如10.3.3.3" dev vpn
+
+    windows:
