@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"go-tun2socks/water"
+	"tun2socks/water"
 )
 
 func isIPv4(ip net.IP) bool {

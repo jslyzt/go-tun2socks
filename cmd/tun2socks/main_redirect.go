@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go-tun2socks/core"
-	"go-tun2socks/proxy/redirect"
+	"tun2socks/core"
+	"tun2socks/proxy/redirect"
 )
 
 func init() {

@@ -283,7 +283,7 @@ void tcp_input(struct pbuf* p, struct netif* inp) {
         prev = NULL;
         for (lpcb = tcp_listen_pcbs.listen_pcbs; lpcb != NULL; lpcb = lpcb->next) {
 #if TUN2SOCKS
-            // go-tun2socks logic
+            // tun2socks logic
             // use the first one, and it should be set to the loopif
             break;
 #endif /* TUN2SOCKS */
@@ -646,7 +646,7 @@ static void tcp_listen_input(struct tcp_pcb_listen* pcb) {
         npcb->local_port = pcb->local_port;
 
 #if TUN2SOCKS
-        // go-tun2socks logic
+        // tun2socks logic
         // Always reset local port to the dest of the connection, because we are
         // accepting all incomming connections, regardless of there destination addresses,
         // as such, npcb is acting as the server socket that communicates with the

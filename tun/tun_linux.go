@@ -3,7 +3,7 @@ package tun
 import (
 	"io"
 
-	"go-tun2socks/water"
+	"tun2socks/water"
 )
 
 // OpenTunDevice open tun

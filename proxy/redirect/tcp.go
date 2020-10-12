@@ -4,8 +4,8 @@ import (
 	"io"
 	"net"
 
-	"go-tun2socks/common/log"
-	"go-tun2socks/core"
+	"tun2socks/common/log"
+	"tun2socks/core"
 )
 
 // To do a benchmark using iperf3 locally, you may follow these steps:

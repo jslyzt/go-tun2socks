@@ -11,11 +11,11 @@ import (
 	"syscall"
 	"time"
 
-	"go-tun2socks/common/dns/blocker"
-	"go-tun2socks/common/log"
-	_ "go-tun2socks/common/log/simple" // Register a simple logger.
-	"go-tun2socks/core"
-	"go-tun2socks/tun"
+	"tun2socks/common/dns/blocker"
+	"tun2socks/common/log"
+	_ "tun2socks/common/log/simple" // Register a simple logger.
+	"tun2socks/core"
+	"tun2socks/tun"
 )
 
 // 常量定义

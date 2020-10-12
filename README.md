@@ -1,4 +1,4 @@
-# go-tun2socks
+# tun2socks
 
 ### 运行参数
 

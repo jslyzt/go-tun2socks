@@ -213,7 +213,7 @@ void udp_input(struct pbuf* p, struct netif* inp) {
     for (pcb = udp_pcbs; pcb != NULL; pcb = pcb->next) {
 
 #if TUN2SOCKS
-        // go-tun2socks logic
+        // tun2socks logic
         // take the first one, library users are responsible for creating that pcb
         break;
 #endif /* TUN2SOCKS */
@@ -368,7 +368,7 @@ void udp_input(struct pbuf* p, struct netif* inp) {
             /* callback */
             if (pcb->recv != NULL) {
 #if TUN2SOCKS
-                // go-tun2socks logic
+                // tun2socks logic
                 // Since we are accepting all udp datagrams using the default netif and
                 // and the default pcb, and the address of the default pcb need not to match
                 // the packet's dest address in tun2socks, our application will never

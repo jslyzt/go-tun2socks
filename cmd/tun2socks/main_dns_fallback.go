@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 
-	"go-tun2socks/core"
-	"go-tun2socks/proxy/dnsfallback"
+	"tun2socks/core"
+	"tun2socks/proxy/dnsfallback"
 )
 
 func init() {

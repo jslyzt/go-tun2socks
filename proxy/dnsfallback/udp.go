@@ -5,8 +5,8 @@ import (
 	"errors"
 	"net"
 
-	"go-tun2socks/common/dns"
-	"go-tun2socks/core"
+	"tun2socks/common/dns"
+	"tun2socks/core"
 )
 
 // UDP handler that intercepts DNS queries and replies with a truncated response (TC bit)

@@ -7,8 +7,8 @@ import (
 
 	"golang.org/x/net/proxy"
 
-	"go-tun2socks/common/log"
-	"go-tun2socks/core"
+	"tun2socks/common/log"
+	"tun2socks/core"
 )
 
 type tcpHandler struct {

@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"go-tun2socks/common/log"
+	"tun2socks/common/log"
 )
 
 // BlockOutsideDNS block outside dns

@@ -1,8 +1,8 @@
-module go-tun2socks
+module tun2socks
 
 go 1.15
 
 require (
-	golang.org/x/net v0.0.0-20200822124328-c89045814202
-	golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6
+	golang.org/x/net v0.0.0-20201010224723-4f7140c49acb
+	golang.org/x/sys v0.0.0-20201009025420-dfb3f7c4e634
 )

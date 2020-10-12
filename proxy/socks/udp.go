@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"go-tun2socks/common/log"
-	"go-tun2socks/core"
+	"tun2socks/common/log"
+	"tun2socks/core"
 )
 
 // max IP packet size - min IP header size - min UDP header size - min SOCKS5 header size

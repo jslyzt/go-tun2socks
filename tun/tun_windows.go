@@ -1,7 +1,7 @@
 package tun
 
 import (
-	"go-tun2socks/water"
+	"tun2socks/water"
 	"io"
 )
 
